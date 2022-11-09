@@ -47,8 +47,8 @@ public class Shell {
         ParseTree tree = parser.command();
         ArrayList<String> rawCommands = new ArrayList<>();
 
-        System.out.println(parserInput);
-        System.out.println(rawCommands);
+        // System.out.println(parserInput);
+        // System.out.println(rawCommands);
 
         StringBuilder lastSubcommand = new StringBuilder();
         for (int i=0; i<tree.getChildCount(); i++) {

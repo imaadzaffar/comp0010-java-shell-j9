@@ -1,7 +1,6 @@
-package uk.commands;
+package uk.ac.ucl.shell.commands;
 
-public class Seq implements Command {
-
+public class Pipe implements Command {
     @Override
     public void eval(String input, String output) {
 
