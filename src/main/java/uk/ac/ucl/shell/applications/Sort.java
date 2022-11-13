@@ -53,19 +53,23 @@ public class Sort implements Application {
                     while ((line = reader.readLine()) != null) {
                         lines.add(line);
                     }
-                }
+                } catch (IOException e) {
+                    throw new RuntimeException("tail: cannot open " + sortArg);
+                } 
             } else {
                 throw new RuntimeException("sort: " + sortArg + " does not exist");
             }
         } else {
             // take input from stdin
-            
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, encoding))) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, encoding));
+            try {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     lines.add(line);
                 }
-            } 
+            } catch (NoSuchElementException e) {
+                reader.close();
+            }
         }   
 
         if (!lines.isEmpty()) {
