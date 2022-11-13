@@ -24,7 +24,7 @@ public class Tail implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
 
-        if (((args.size() > 3) || (args.size() == 2 || args.size() == 3) && !args.get(0).equals("-n")) || (args.size() == 1 && args.get(0).equals("-n"))) {
+        if ((args.size() > 3) || ((args.size() == 2 || args.size() == 3) && !args.get(0).equals("-n")) || (args.size() == 1 && args.get(0).equals("-n"))) {
             throw new RuntimeException("tail: wrong arguments");
         }
 
@@ -44,17 +44,6 @@ public class Tail implements Application {
         } else if (args.size() == 1) {
             tailArg = args.get(0);
         }
-        
-        // if (args.size() == 3) {
-        //     try {
-        //         tailLines = Integer.parseInt(args.get(1));
-        //     } catch (Exception e) {
-        //         throw new RuntimeException("tail: wrong argument " + args.get(1));
-        //     }
-        //     tailArg = args.get(2);
-        // } else {
-        //     tailArg = args.get(0);
-        // }
 
         ArrayList<String> lines = new ArrayList<>();
         Charset encoding = StandardCharsets.UTF_8;
@@ -96,33 +85,5 @@ public class Tail implements Application {
             writer.write(lines.get(i) + System.getProperty("line.separator"));
             writer.flush();
         }
-
-
-        // File tailFile = new File(Shell.getCurrentDirectory() + File.separator + tailArg);
-        // if (tailFile.exists()) {
-        //     Charset encoding = StandardCharsets.UTF_8;
-        //     Path filePath = Paths.get(Shell.getCurrentDirectory() + File.separator + tailArg);
-        //     ArrayList<String> storage = new ArrayList<>();
-        //     try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
-        //         String line;
-        //         while ((line = reader.readLine()) != null) {
-        //             storage.add(line);
-        //         }
-        //         int index = 0;
-        //         if (tailLines > storage.size()) {
-        //             index = 0;
-        //         } else {
-        //             index = storage.size() - tailLines;
-        //         }
-        //         for (int i = index; i < storage.size(); i++) {
-        //             writer.write(storage.get(i) + System.getProperty("line.separator"));
-        //             writer.flush();
-        //         }
-        //     } catch (IOException e) {
-        //         throw new RuntimeException("tail: cannot open " + tailArg);
-        //     }
-        // } else {
-        //     throw new RuntimeException("tail: " + tailArg + " does not exist");
-        // }
     }
 }
