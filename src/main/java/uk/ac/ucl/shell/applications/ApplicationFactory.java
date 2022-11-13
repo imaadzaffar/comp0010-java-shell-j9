@@ -19,6 +19,7 @@ public class ApplicationFactory {
             case "tail" -> new Tail();
             case "grep" -> new Grep();
             case "find" -> new Find();
+            case "sort" -> new Sort();
             default -> throw new RuntimeException(appName + ": unknown application");
         };
 
