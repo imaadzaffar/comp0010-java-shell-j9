@@ -43,7 +43,7 @@ public class Sort implements Application {
 
         ArrayList<String> lines = new ArrayList<>();
         Charset encoding = StandardCharsets.UTF_8;
-        if ((args.size() == 1 && !inReverseOrder) || (args.size() == 2)) {
+        if (!sortArg.isEmpty()) {
             File sortFile = new File(Shell.getCurrentDirectory() + File.separator + sortArg);
             if (sortFile.exists()) {
                 Path filePath = Paths.get(Shell.getCurrentDirectory() + File.separator + sortArg);
@@ -53,7 +53,7 @@ public class Sort implements Application {
                         lines.add(line);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException("tail: cannot open " + sortArg);
+                    throw new RuntimeException("sort: cannot open " + sortArg);
                 } 
             } else {
                 throw new RuntimeException("sort: " + sortArg + " does not exist");

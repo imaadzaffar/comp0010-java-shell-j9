@@ -32,9 +32,6 @@ public class Cat implements Application {
                     writer.write(System.getProperty("line.separator"));
                     writer.flush();
                 }
-            } catch (IOException e) {
-                // this exception will never be thrown
-                throw new RuntimeException(e);
             } catch (NoSuchElementException e) {
                 reader.close();
             }

@@ -20,6 +20,7 @@ public class ApplicationFactory {
             case "grep" -> new Grep();
             case "find" -> new Find();
             case "sort" -> new Sort();
+            case "uniq" -> new Uniq();
             default -> throw new RuntimeException(appName + ": unknown application");
         };
 

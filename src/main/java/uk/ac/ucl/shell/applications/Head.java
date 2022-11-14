@@ -23,7 +23,7 @@ public class Head implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
         if ((args.size() > 3) || ((args.size() == 2 || args.size() == 3) && !args.get(0).equals("-n")) || (args.size() == 1 && args.get(0).equals("-n"))) {
-            throw new RuntimeException("tail: wrong arguments");
+            throw new RuntimeException("head: wrong arguments");
         }
 
         int headLines = 10;
@@ -33,7 +33,7 @@ public class Head implements Application {
             try {
                 headLines = Integer.parseInt(args.get(1));
             } catch (NumberFormatException e) {
-                throw new RuntimeException("tail: wrong arguments");
+                throw new RuntimeException("head: wrong arguments");
             }
         }
 
@@ -55,10 +55,10 @@ public class Head implements Application {
                         lines.add(line);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException("tail: cannot open " + headArg);
+                    throw new RuntimeException("head: cannot open " + headArg);
                 } 
             } else {
-                throw new RuntimeException("tail: " + headArg + " does not exist");
+                throw new RuntimeException("head: " + headArg + " does not exist");
             }
         } else {
             // take input from stdin
