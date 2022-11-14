@@ -10,24 +10,35 @@ import uk.ac.ucl.shell.Shell;
 
 public class Find implements Application {
     private File startDir;
+    private String outputStart;
     private String filenamePattern;
 
     @Override
     public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
         if (args.isEmpty()) {
             throw new RuntimeException("find: missing argument");
-        } else if (args.size() == 1) { 
-            startDir = new File(Shell.getCurrentDirectory());
-            filenamePattern = args.get(0);
-        } else if (args.size() == 2) {
-            startDir = new File(Shell.getCurrentDirectory(), args.get(0));
-            filenamePattern = args.get(2);
-        } else if (args.size() > 1) {
-            throw new RuntimeException("find: too many arguments");
+        } else if (args.size() == 2) { 
+            if (args.get(0).equals("-name")) {
+                startDir = new File(Shell.getCurrentDirectory());
+                filenamePattern = args.get(1);
+                outputStart = ".";
+            } else {
+                throw new RuntimeException("find: missing -name flag");
+            }
+        } else if (args.size() == 3) {
+            if (args.get(1).equals("-name")) {
+                startDir = new File(Shell.getCurrentDirectory(), args.get(0));
+                filenamePattern = args.get(2);
+                outputStart = args.get(0);
+            } else {
+                throw new RuntimeException("find: missing -name flag");
+            }
+        } else if (args.size() >= 1) {
+            throw new RuntimeException("find: incorrect number of arguments");
         }
         
         if (!startDir.exists() || !startDir.isDirectory()) {
-            throw new RuntimeException("cd: " + startDir.getName() + " is not an existing directory");
+            throw new RuntimeException("find: " + startDir.getName() + " is not an existing directory");
         }
         StringBuilder res = new StringBuilder();
         findFile(startDir, filenamePattern, res);
@@ -37,8 +48,11 @@ public class Find implements Application {
     }
 
     private void findFile(File file, String pattern, StringBuilder res) {
-        if (file.isFile() && file.getName().equals(pattern)) {
-            String path = new File(startDir.getAbsolutePath()).toURI().relativize(new File(file.getAbsolutePath()).toURI()).getPath();
+        if (file.isFile() &&
+            (pattern.contains("*") && file.getName().contains(pattern.replace("*", "")) ||
+            file.getName().equals(pattern))
+            ) {
+            String path = outputStart + "/" + new File(startDir.getAbsolutePath()).toURI().relativize(new File(file.getAbsolutePath()).toURI()).getPath();
             // res.append(path);
             // res.append("\n");
             try {
@@ -51,7 +65,6 @@ public class Find implements Application {
         } else if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (File f : files) {
-                // TODO: change to pattern match, not equals
                 findFile(f, pattern, res);
             }
         }
