@@ -5,22 +5,13 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and run tests on docker
     steps:
-      # To use this repository's private action,
-      # you must check out the repository
       - name: Checkout
         uses: actions/checkout@v3
       - name: Action step
-        uses: ./ # Uses an action in the root directory
-
+        uses: ./
       - name: Build shell container with Docker
         run: docker build -t shell .
       - name: Build system tests
         run: docker build -t comp0010-system-test .
-      - name: Run unit test
-        run: docker run --rm shell /comp0010/tools/test
-      - name: Run analysis test
-        run: docker run --rm shell /comp0010/tools/analysis
-      - name: Run coverage test
-        run: docker run --rm shell /comp0010/tools/coverage
       - name: Run system test
         run: python3 system_test/tests.py -v
