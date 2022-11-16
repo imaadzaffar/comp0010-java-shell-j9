@@ -41,7 +41,7 @@ public class Sort implements Application {
             sortArg = args.get(1);
         }
 
-        ArrayList<String> lines = new ArrayList<>();
+        ArrayList<String> lines = new ArrayList<String>();
         Charset encoding = StandardCharsets.UTF_8;
         if (!sortArg.isEmpty()) {
             File sortFile = new File(Shell.getCurrentDirectory() + File.separator + sortArg);

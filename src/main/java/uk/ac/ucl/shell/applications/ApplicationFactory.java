@@ -21,6 +21,7 @@ public class ApplicationFactory {
             case "find" -> new Find();
             case "sort" -> new Sort();
             case "uniq" -> new Uniq();
+            case "cut" -> new Cut();
             default -> throw new RuntimeException(appName + ": unknown application");
         };
 
