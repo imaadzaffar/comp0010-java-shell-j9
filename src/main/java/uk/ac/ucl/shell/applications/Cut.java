@@ -3,10 +3,9 @@ package uk.ac.ucl.shell.applications;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,18 +13,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.lang.String;
 
 import uk.ac.ucl.shell.Shell;
 
-import static uk.ac.ucl.shell.Shell.writer;
-
 public class Cut implements Application {
     @Override
-    public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if ((args.size() <= 1) || !(args.get(0).equals("-b"))) {
             throw new RuntimeException("cut: missing argument");
         }
@@ -117,9 +113,9 @@ public class Cut implements Application {
                     while ((line = reader.readLine()) != null) {
                         if ((l_end >= r_start && l_end > -1 && r_start > -1) || (r_start == 0)) {
                             for (int i = 0; i < line.length(); i++) {
-                                writer.write(line.charAt(i));
+                                output.write(line.charAt(i));
                             }
-                            writer.write(System.getProperty("line.separator"));
+                            output.write(System.getProperty("line.separator"));
                         } else {
                             List<List<Integer>> finalIntervals = integerIntervals;
                             if ((r_start <= line.length() - 1) && r_start > -1) {
@@ -142,12 +138,12 @@ public class Cut implements Application {
                                     end = line.length() - 1;
                                 }
                                 for (int i = start; i <= end; i++) {
-                                    writer.write(line.charAt(i));
+                                    output.write(line.charAt(i));
                                 }
                             }
-                            writer.write(System.getProperty("line.separator"));
+                            output.write(System.getProperty("line.separator"));
                         }
-                        writer.flush();
+                        output.flush();
                     }
                 } catch (IOException e) {
                     throw new RuntimeException("cut: cannot open " + cutArg);
@@ -162,9 +158,9 @@ public class Cut implements Application {
                 while ((line = reader.readLine()) != null) {
                     if ((l_end >= r_start && l_end > -1 && r_start > -1) || (r_start == 0)) {
                             for (int i = 0; i < line.length(); i++) {
-                                writer.write(line.charAt(i));
+                                output.write(line.charAt(i));
                             }
-                            writer.write(System.getProperty("line.separator"));
+                            output.write(System.getProperty("line.separator"));
                         } else {
                             List<List<Integer>> finalIntervals = integerIntervals;
                             if ((r_start <= line.length() - 1) && r_start > -1) {
@@ -187,12 +183,12 @@ public class Cut implements Application {
                                     end = line.length() - 1;
                                 }
                                 for (int i = start; i <= end; i++) {
-                                    writer.write(line.charAt(i));
+                                    output.write(line.charAt(i));
                                 }
                             }
-                            writer.write(System.getProperty("line.separator"));
+                            output.write(System.getProperty("line.separator"));
                         }
-                        writer.flush();
+                        output.flush();
                 }   
             } catch (NoSuchElementException e) {
                 reader.close();

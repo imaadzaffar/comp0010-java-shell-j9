@@ -20,7 +20,7 @@ import uk.ac.ucl.shell.Shell;
 
 public class Tail implements Application {
     @Override
-    public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
 
         if ((args.size() > 3) || ((args.size() == 2 || args.size() == 3) && !args.get(0).equals("-n")) || (args.size() == 1 && args.get(0).equals("-n"))) {
             throw new RuntimeException("tail: wrong arguments");
@@ -80,8 +80,8 @@ public class Tail implements Application {
             index = lines.size() - tailLines;
         }
         for (int i = index; i < lines.size(); i++) {
-            writer.write(lines.get(i) + System.getProperty("line.separator"));
-            writer.flush();
+            output.write(lines.get(i) + System.getProperty("line.separator"));
+            output.flush();
         }
     }
 }

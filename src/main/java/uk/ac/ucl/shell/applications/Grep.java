@@ -19,7 +19,7 @@ import uk.ac.ucl.shell.Shell;
 
 public class Grep implements Application {
     @Override
-    public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if (args.size() < 1) {
             throw new RuntimeException("grep: wrong number of arguments");
         }
@@ -46,12 +46,12 @@ public class Grep implements Application {
                         Matcher matcher = grepPattern.matcher(line);
                         if (matcher.find()) {
                             if (numOfFiles > 1) {
-                                writer.write(args.get(j+1));
-                                writer.write(":");
+                                output.write(args.get(j+1));
+                                output.write(":");
                             }
-                            writer.write(line);
-                            writer.write(System.getProperty("line.separator"));
-                            writer.flush();
+                            output.write(line);
+                            output.write(System.getProperty("line.separator"));
+                            output.flush();
                         }
                     }
                 } catch (IOException e) {
@@ -65,9 +65,9 @@ public class Grep implements Application {
                 while ((line = reader.readLine()) != null) {
                     Matcher matcher = grepPattern.matcher(line);
                     if (matcher.find()) {
-                        writer.write(line);
-                        writer.write(System.getProperty("line.separator"));
-                        writer.flush();
+                        output.write(line);
+                        output.write(System.getProperty("line.separator"));
+                        output.flush();
                     }
                 }
             } catch (NoSuchElementException e) {

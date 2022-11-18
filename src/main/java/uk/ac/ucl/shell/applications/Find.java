@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.List;
 
 import uk.ac.ucl.shell.Shell;
@@ -14,7 +15,7 @@ public class Find implements Application {
     private String filenamePattern;
 
     @Override
-    public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if (args.isEmpty()) {
             throw new RuntimeException("find: missing argument");
         } else if (args.size() == 2) { 
@@ -41,13 +42,13 @@ public class Find implements Application {
             throw new RuntimeException("find: " + startDir.getName() + " is not an existing directory");
         }
         StringBuilder res = new StringBuilder();
-        findFile(startDir, filenamePattern, res);
+        findFile(startDir, filenamePattern, res, output);
         // System.out.println(res.toString());
-        Shell.writer.flush();
+        output.flush();
         // Shell.setCurrentDirectory(startDir.getCanonicalPath());
     }
 
-    private void findFile(File file, String pattern, StringBuilder res) {
+    private void findFile(File file, String pattern, StringBuilder res, OutputStreamWriter output) {
         if (file.isFile() &&
             (pattern.contains("*") && file.getName().contains(pattern.replace("*", "")) ||
             file.getName().equals(pattern))
@@ -56,8 +57,8 @@ public class Find implements Application {
             // res.append(path);
             // res.append("\n");
             try {
-                Shell.writer.write(path);
-                Shell.writer.write(System.getProperty("line.separator"));
+                output.write(path);
+                output.write(System.getProperty("line.separator"));
                 // Shell.writer.flush();
             } catch (IOException e) {
                 throw new RuntimeException("find: error writing");
@@ -65,7 +66,7 @@ public class Find implements Application {
         } else if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (File f : files) {
-                findFile(f, pattern, res);
+                findFile(f, pattern, res, output);
             }
         }
     }

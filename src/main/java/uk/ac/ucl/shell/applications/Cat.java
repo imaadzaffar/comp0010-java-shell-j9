@@ -18,7 +18,7 @@ import uk.ac.ucl.shell.Shell;
 
 public class Cat implements Application {
     @Override
-    public void exec(List<String> args, InputStream input, OutputStreamWriter output) {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         Charset encoding = StandardCharsets.UTF_8;
         if (args.isEmpty()) {
             // take input from stdin
@@ -26,9 +26,9 @@ public class Cat implements Application {
             try {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    writer.write(line);
-                    writer.write(System.getProperty("line.separator"));
-                    writer.flush();
+                    output.write(line);
+                    output.write(System.getProperty("line.separator"));
+                    output.flush();
                 }
             } catch (NoSuchElementException e) {
                 reader.close();

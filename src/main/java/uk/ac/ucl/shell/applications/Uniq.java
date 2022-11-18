@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -16,12 +17,10 @@ import java.util.NoSuchElementException;
 
 import uk.ac.ucl.shell.Shell;
 
-import static uk.ac.ucl.shell.Shell.writer;
-
 public class Uniq implements Application {
 
     @Override
-    public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         // For uniq to work, the input list must be sorted since it removes adjacent duplicate elements
 
         if (args.size() > 2 || (args.size() == 2 && !args.get(0).equals("-i"))) {
@@ -47,16 +46,16 @@ public class Uniq implements Application {
                     String line = reader.readLine();
                     String prev = String.valueOf(line);
                     if (line != null) {
-                        writer.write(line + System.getProperty("line.separator"));
+                        output.write(line + System.getProperty("line.separator"));
                         while ((line = reader.readLine()) != null) {
                             if (!ignoreCase) {
                                 if (!prev.equals(line)) {
-                                    writer.write(line + System.getProperty("line.separator"));
+                                    output.write(line + System.getProperty("line.separator"));
                                     prev = line;
                                 }
                             } else {
                                 if (!prev.equalsIgnoreCase(line)) {
-                                    writer.write(line + System.getProperty("line.separator"));
+                                    output.write(line + System.getProperty("line.separator"));
                                     prev = line;
                                 }
                             }
@@ -75,16 +74,16 @@ public class Uniq implements Application {
                 String line = reader.readLine();
                 String prev = String.valueOf(line);
                 if (line != null) {
-                    writer.write(line + System.getProperty("line.separator"));
+                    output.write(line + System.getProperty("line.separator"));
                     while ((line = reader.readLine()) != null) {
                         if (!ignoreCase) {
                             if (!prev.equals(line)) {
-                                writer.write(line + System.getProperty("line.separator"));
+                                output.write(line + System.getProperty("line.separator"));
                                 prev = line;
                             }
                         } else {
                             if (!prev.equalsIgnoreCase(line)) {
-                                writer.write(line + System.getProperty("line.separator"));
+                                output.write(line + System.getProperty("line.separator"));
                                 prev = line;
                             }
                         }
@@ -94,6 +93,6 @@ public class Uniq implements Application {
                 reader.close();
             }
         }
-        writer.flush();
+        output.flush();
     }
 }

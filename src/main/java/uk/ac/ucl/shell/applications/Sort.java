@@ -3,6 +3,7 @@ package uk.ac.ucl.shell.applications;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,13 +19,11 @@ import java.util.List;
 
 import uk.ac.ucl.shell.Shell;
 
-import static uk.ac.ucl.shell.Shell.writer;
-
 // creates a new file called "newfilename" that stores the sorted version of the file
 
 public class Sort implements Application {
     @Override
-    public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if (args.size() >= 3) { 
             throw new RuntimeException("sort: wrong arguments");
         }
@@ -80,8 +79,8 @@ public class Sort implements Application {
         } 
 
         for (String line : lines) {
-            writer.write(line + System.getProperty("line.separator"));
-            writer.flush();
+            output.write(line + System.getProperty("line.separator"));
+            output.flush();
         }
     }
 }
