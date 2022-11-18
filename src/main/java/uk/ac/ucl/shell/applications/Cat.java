@@ -1,6 +1,7 @@
 package uk.ac.ucl.shell.applications;
 
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,17 +12,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import uk.ac.ucl.shell.Shell;
 
 public class Cat implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) {
+        Charset encoding = StandardCharsets.UTF_8;
         if (args.isEmpty()) {
-            throw new RuntimeException("cat: missing arguments");
+            // take input from stdin
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, encoding));
+            try {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    writer.write(line);
+                    writer.write(System.getProperty("line.separator"));
+                    writer.flush();
+                }
+            } catch (NoSuchElementException e) {
+                reader.close();
+            }
         } else {
             for (String arg : args) {
-                Charset encoding = StandardCharsets.UTF_8;
                 File currFile = new File(Shell.getCurrentDirectory() + File.separator + arg);
                 if (currFile.exists()) {
                     Path filePath = Paths.get(Shell.getCurrentDirectory() + File.separator + arg);

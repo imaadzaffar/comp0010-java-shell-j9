@@ -43,7 +43,7 @@ public class Shell {
         ShellGrammarParser parser = new ShellGrammarParser(tokenStream);
         ParseTree tree = parser.command();
         ArrayList<String> rawCommands = new ArrayList<>();
-
+        
         StringBuilder lastSubcommand = new StringBuilder();
         for (int i=0; i<tree.getChildCount(); i++) {
             if (!tree.getChild(i).getText().equals(";")) {
