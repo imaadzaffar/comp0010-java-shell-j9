@@ -19,7 +19,7 @@ import uk.ac.ucl.shell.Shell;
 
 public class Head implements Application {
     @Override
-    public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if ((args.size() > 3) || ((args.size() == 2 || args.size() == 3) && !args.get(0).equals("-n")) || (args.size() == 1 && args.get(0).equals("-n"))) {
             throw new RuntimeException("head: wrong arguments");
         }
@@ -73,13 +73,13 @@ public class Head implements Application {
 
         if (lines.size() <= headLines) {
             for (String line : lines) {
-                writer.write(line + System.getProperty("line.separator"));
-                writer.flush();
+                output.write(line + System.getProperty("line.separator"));
+                output.flush();
             }
         } else {
             for (int i = 0; i < headLines; i++) {
-                writer.write(lines.get(i) + System.getProperty("line.separator"));
-                writer.flush();
+                output.write(lines.get(i) + System.getProperty("line.separator"));
+                output.flush();
             }
         }
     }
