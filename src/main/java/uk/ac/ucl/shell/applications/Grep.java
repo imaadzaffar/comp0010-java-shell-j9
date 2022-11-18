@@ -43,8 +43,8 @@ public class Grep implements Application {
         
                             if(grepPattern.matcher(line).find()) {
                                 if(files.size() > 1)
-                                    output.write(file + ":");
-                                    
+                                    output.write(arg + ":");
+
                                 output.write(line);
                                 output.write(System.getProperty("line.separator"));
                                 output.flush();
