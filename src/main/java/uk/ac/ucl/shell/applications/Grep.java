@@ -3,7 +3,7 @@ package uk.ac.ucl.shell.applications;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,11 +15,9 @@ import java.util.regex.Pattern;
 
 import uk.ac.ucl.shell.Shell;
 
-import static uk.ac.ucl.shell.Shell.writer;
-
 public class Grep implements Application {
     @Override
-    public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if (args.size() < 2) {
             throw new RuntimeException("grep: wrong number of arguments");
         }
@@ -44,12 +42,12 @@ public class Grep implements Application {
                     Matcher matcher = grepPattern.matcher(line);
                     if (matcher.find()) {
                         if (numOfFiles > 1) {
-                            writer.write(args.get(j+1));
-                            writer.write(":");
+                            output.write(args.get(j+1));
+                            output.write(":");
                         }
-                        writer.write(line);
-                        writer.write(System.getProperty("line.separator"));
-                        writer.flush();
+                        output.write(line);
+                        output.write(System.getProperty("line.separator"));
+                        output.flush();
                     }
                 }
             } catch (IOException e) {

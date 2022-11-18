@@ -22,8 +22,6 @@ import uk.ac.ucl.shell.applications.Application;
 import uk.ac.ucl.shell.applications.ApplicationFactory;
 
 public class Shell {
-    public static OutputStreamWriter writer = null;
-
     private static ApplicationFactory factory = new ApplicationFactory();
 
     private static String currentDirectory = System.getProperty("user.dir");
@@ -37,7 +35,6 @@ public class Shell {
     }
 
     public static void eval(String cmdline, OutputStream output) throws IOException {
-        writer = new OutputStreamWriter(output);
 
         // TODO: lexing and parsing using antlr4 + visitor pattern
         CharStream parserInput = CharStreams.fromString(cmdline);
@@ -46,9 +43,6 @@ public class Shell {
         ShellGrammarParser parser = new ShellGrammarParser(tokenStream);
         ParseTree tree = parser.command();
         ArrayList<String> rawCommands = new ArrayList<>();
-
-        System.out.println(parserInput);
-        System.out.println(rawCommands);
 
         StringBuilder lastSubcommand = new StringBuilder();
         for (int i=0; i<tree.getChildCount(); i++) {
@@ -95,7 +89,7 @@ public class Shell {
             Application app = factory.getApp(appName);
 
             // Create input/output streams
-            app.exec(appArgs, null, null);
+            app.exec(appArgs, null, new OutputStreamWriter(output));
         }
     }
 

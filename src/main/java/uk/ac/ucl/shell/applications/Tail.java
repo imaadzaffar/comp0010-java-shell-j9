@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,11 +15,9 @@ import java.util.List;
 
 import uk.ac.ucl.shell.Shell;
 
-import static uk.ac.ucl.shell.Shell.writer;
-
 public class Tail implements Application {
     @Override
-    public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if (args.isEmpty()) {
             throw new RuntimeException("tail: missing arguments");
         }
@@ -58,8 +56,8 @@ public class Tail implements Application {
                     index = storage.size() - tailLines;
                 }
                 for (int i = index; i < storage.size(); i++) {
-                    writer.write(storage.get(i) + System.getProperty("line.separator"));
-                    writer.flush();
+                    output.write(storage.get(i) + System.getProperty("line.separator"));
+                    output.flush();
                 }
             } catch (IOException e) {
                 throw new RuntimeException("tail: cannot open " + tailArg);

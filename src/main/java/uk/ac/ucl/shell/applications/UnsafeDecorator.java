@@ -2,7 +2,7 @@ package uk.ac.ucl.shell.applications;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.List;
 
 public class UnsafeDecorator implements Application {
@@ -13,11 +13,13 @@ public class UnsafeDecorator implements Application {
     }
 
     @Override
-    public void exec(List<String> args, InputStream input, OutputStream output) throws IOException {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         try {
             this.baseApplcation.exec(args, input, output);
-        } catch(IOException ex) {
-            //add excetion to output
+        } catch(Exception ex) {
+            output.write(ex.getMessage());
+            output.write(System.getProperty("line.separator"));
+            output.flush();
         }
     }
 }

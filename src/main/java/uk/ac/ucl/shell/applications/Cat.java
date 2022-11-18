@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,11 +14,9 @@ import java.util.List;
 
 import uk.ac.ucl.shell.Shell;
 
-import static uk.ac.ucl.shell.Shell.writer;
-
 public class Cat implements Application {
     @Override
-    public void exec(List<String> args, InputStream input, OutputStream output) {
+    public void exec(List<String> args, InputStream input, OutputStreamWriter output) {
         if (args.isEmpty()) {
             throw new RuntimeException("cat: missing arguments");
         } else {
@@ -30,9 +28,9 @@ public class Cat implements Application {
                     try (BufferedReader reader = Files.newBufferedReader(filePath, encoding)) {
                         String line;
                         while ((line = reader.readLine()) != null) {
-                            writer.write(line);
-                            writer.write(System.getProperty("line.separator"));
-                            writer.flush();
+                            output.write(line);
+                            output.write(System.getProperty("line.separator"));
+                            output.flush();
                         }
                     } catch (IOException e) {
                         throw new RuntimeException("cat: cannot open " + arg);
