@@ -32,7 +32,9 @@ public class Grep implements Application {
                 }
             }
         } else {
-            for(String arg : args.subList(1, args.size())) {
+            List<String> files = args.subList(1, args.size());
+
+            for(String arg : files) {
                 File file = Shell.getCurrentDirectory().resolve(arg).toFile();
                 if (file.exists()) {
                     try (Scanner reader = new Scanner(file)) {
@@ -40,6 +42,9 @@ public class Grep implements Application {
                             String line = reader.nextLine();
         
                             if(grepPattern.matcher(line).find()) {
+                                if(files.size() > 1)
+                                    output.write(file + ":");
+                                    
                                 output.write(line);
                                 output.write(System.getProperty("line.separator"));
                                 output.flush();

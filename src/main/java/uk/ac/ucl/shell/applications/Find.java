@@ -42,7 +42,7 @@ public class Find extends SimpleFileVisitor<Path> implements Application {
         Files.walkFileTree(startDir.toPath(), this);
 
         for(Path path : matches) {
-            output.write(path.toString());
+            output.write(startDir.toPath().relativize(path).toString());
             output.write(System.getProperty("line.separator"));
         }
 
