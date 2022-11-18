@@ -17,7 +17,7 @@ public class Cd implements Application {
             throw new RuntimeException("cd: too many arguments");
         }
         String dirString = args.get(0);
-        File dir = new File(Shell.getCurrentDirectory(), dirString);
+        File dir = Shell.getCurrentDirectory().resolve(dirString).toFile();
         if (!dir.exists() || !dir.isDirectory()) {
             throw new RuntimeException("cd: " + dirString + " is not an existing directory");
         }

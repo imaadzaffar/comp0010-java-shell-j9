@@ -24,14 +24,14 @@ import uk.ac.ucl.shell.applications.ApplicationFactory;
 public class Shell {
     private static ApplicationFactory factory = new ApplicationFactory();
 
-    private static String currentDirectory = System.getProperty("user.dir");
+    private static Path currentDirectory = Paths.get(System.getProperty("user.dir"));
 
-    public static String getCurrentDirectory() {
+    public static Path getCurrentDirectory() {
         return currentDirectory;
     }
 
     public static void setCurrentDirectory(String cd) {
-        currentDirectory = cd;
+        currentDirectory = Paths.get(cd);
     }
 
     public static void eval(String cmdline, OutputStream output) throws IOException {
@@ -43,7 +43,7 @@ public class Shell {
         ShellGrammarParser parser = new ShellGrammarParser(tokenStream);
         ParseTree tree = parser.command();
         ArrayList<String> rawCommands = new ArrayList<>();
-        
+
         StringBuilder lastSubcommand = new StringBuilder();
         for (int i=0; i<tree.getChildCount(); i++) {
             if (!tree.getChild(i).getText().equals(";")) {
@@ -69,7 +69,7 @@ public class Shell {
                 } else {
                     nonQuote = regexMatcher.group().trim();
                     ArrayList<String> globbingResult = new ArrayList<>();
-                    Path dir = Paths.get(getCurrentDirectory());
+                    Path dir = getCurrentDirectory();
                     DirectoryStream<Path> stream = Files.newDirectoryStream(dir, nonQuote);
                     for (Path entry : stream) {
                         globbingResult.add(entry.getFileName().toString());
@@ -96,7 +96,7 @@ public class Shell {
     public static void main(String[] args) {
         if (args.length > 0) {
             if (args.length != 2) {
-                System.out.println("COMP0010 shell: wrong number of arguments");
+                System.out.println("COMP0010 shell: invalid number of arguments");
                 return;
             }
             if (!args[0].equals("-c")) {

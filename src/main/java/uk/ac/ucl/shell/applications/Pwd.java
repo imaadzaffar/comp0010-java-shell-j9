@@ -10,9 +10,8 @@ import uk.ac.ucl.shell.Shell;
 public class Pwd implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
-        output.write(Shell.getCurrentDirectory());
+        output.write(Shell.getCurrentDirectory().toString());
         output.write(System.getProperty("line.separator"));
-        output.flush();
-        
+        output.flush();    
     }
 }

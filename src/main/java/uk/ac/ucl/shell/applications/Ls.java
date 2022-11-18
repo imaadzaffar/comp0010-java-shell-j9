@@ -13,32 +13,29 @@ public class Ls implements Application {
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         File currDir;
         if (args.isEmpty()) {
-            currDir = new File(Shell.getCurrentDirectory());
+            currDir = Shell.getCurrentDirectory().toFile();
         } else if (args.size() == 1) {
-            currDir = new File(args.get(0));
+            currDir = Shell.getCurrentDirectory().resolve(args.get(0)).toFile();
         } else {
             throw new RuntimeException("ls: too many arguments");
         }
-        try {
-            File[] listOfFiles = currDir.listFiles();
-            boolean atLeastOnePrinted = false;
-            if (listOfFiles != null) {
-                for (File file : listOfFiles) {
-                    if (!file.getName().startsWith(".")) {
-                        output.write(file.getName());
-                        output.write("\t");
-                        output.flush();
-                        atLeastOnePrinted = true;
-                    }
-                }
-            }
-            if (atLeastOnePrinted) {
-                output.write(System.getProperty("line.separator"));
-                output.flush();
-            }
-        } catch (NullPointerException e) {
+        
+        if(!currDir.exists()) {
             throw new RuntimeException("ls: no such directory");
         }
+
+        File[] listOfFiles = currDir.listFiles();
+
+        for (File file : listOfFiles) {
+            if (!file.getName().startsWith(".")) {
+                output.write(file.getName());
+                output.write("\t");
+                output.flush();
+            }
+        }
+
+        output.write(System.getProperty("line.separator"));
+        output.flush();
     }
 }
 
