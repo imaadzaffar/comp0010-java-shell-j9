@@ -1,0 +1,17 @@
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build and run tests on docker
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Action step
+        uses: ./
+      - name: Build shell container with Docker
+        run: docker build -t shell .
+      - name: Build system tests
+        run: docker build -t comp0010-system-test .
+      - name: Run system test
+        run: python3 system_test/tests.py -v
