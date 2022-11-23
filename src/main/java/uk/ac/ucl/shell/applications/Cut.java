@@ -5,11 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.lang.String;
@@ -25,7 +21,17 @@ public class Cut implements Application {
         String[] intervals = args.get(1).split(",");
 
         if (intervals.length == 0) {
-            throw new RuntimeException("cut: invalid argument");
+            throw new RuntimeException("cut: wrong argument");
+        }
+
+        for (String interval : intervals) {
+            try {
+                if (Integer.parseInt(interval) <= 0) {
+                    throw new RuntimeException("cut: wrong argument");
+                }
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("cut: wrong argument");
+            }
         }
         
         if(args.size() == 2) {
@@ -62,23 +68,23 @@ public class Cut implements Application {
         try(ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             byte[] bytes = line.getBytes();
 
-            HashSet<Integer> toCopy = new HashSet<Integer>();
+            HashSet<Integer> toCopy = new HashSet<>();
     
             for(String interval : intervals) {
                 var parts = interval.split("-", -1);
     
                 if(parts.length == 1) {
                     toCopy.add(Integer.parseInt(parts[0]) - 1);
-                } else if(parts[0] == "") {
+                } else if(parts[0].equals("")) {
                     toCopy.addAll(IntStream.range(0, Integer.parseInt(parts[1])).boxed().collect(Collectors.toList()));
-                } else if(parts[1] == "") {
+                } else if(parts[1].equals("")) {
                     toCopy.addAll(IntStream.range(Integer.parseInt(parts[0]) - 1, bytes.length).boxed().collect(Collectors.toList()));
                 } else {
                     toCopy.addAll(IntStream.range(Integer.parseInt(parts[0]) - 1, Integer.parseInt(parts[1])).boxed().collect(Collectors.toList()));
                 }
             }
 
-            List<Integer> sorted = new ArrayList<Integer>(toCopy);
+            List<Integer> sorted = new ArrayList<>(toCopy);
             Collections.sort(sorted);
 
             for(int index : sorted) {
