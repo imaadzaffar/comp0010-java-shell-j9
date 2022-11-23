@@ -1,4 +1,4 @@
-// Generated from uk/ac/ucl/shell/ShellGrammar.g4 by ANTLR 4.7
+// Generated from uk\ac\u005Cucl\shell\ShellGrammar.g4 by ANTLR 4.7
 package uk.ac.ucl.shell;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 

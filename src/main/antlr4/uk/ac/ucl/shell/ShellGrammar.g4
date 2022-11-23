@@ -1,10 +1,11 @@
 grammar ShellGrammar;
+options { contextSuperClass=ShellRuleContext; }
 
 /*
  * Parser Rules
  */
 
-shell : sequence? EOF;
+shell : sequence?;
 sequence : command (';' command)*;
 command : pipe | call;
 pipe : call ('|' call)+;
