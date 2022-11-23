@@ -25,9 +25,7 @@ public class LsTest {
         Scanner scn = new Scanner(in);
         scn.useDelimiter("\t");
         for (int i = 0; i < expecteds.size(); i++) {
-            String tmp = scn.next();
-            System.out.println(tmp);
-            assertTrue(expecteds.contains(tmp));
+            assertTrue(expecteds.contains(scn.next()));
         }
         scn.close();
     }

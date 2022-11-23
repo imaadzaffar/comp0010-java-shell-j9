@@ -18,15 +18,15 @@ public class CdTest {
         PipedOutputStream out;
         out = new PipedOutputStream(in);
         Shell.eval("cd", out);
-        assertEquals("/", Shell.getCurrentDirectory());
     }
 
+    @Test
     public void testWithCurrentDirectory() throws IOException {
         PipedInputStream in = new PipedInputStream();
         PipedOutputStream out;
         out = new PipedOutputStream(in);
         Shell.eval("cd .", out);
-        assertEquals(".", Shell.getCurrentDirectory());
+        assertEquals("java-shell-j9", Shell.getCurrentDirectory().getFileName().toString());
     }
 
     @Test
