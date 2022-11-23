@@ -4,4 +4,4 @@ TOOLS_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 cd "$TOOLS_ROOT/../" &&
 mvn --batch-mode clean jacoco:prepare-agent install jacoco:report &&
-python3 tools/print_table_coverage.py
+python3 tools/print_output_coverage.py
