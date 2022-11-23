@@ -7,8 +7,8 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class LsTest {
@@ -16,20 +16,19 @@ public class LsTest {
     }
 
     @Test
-    public void test() throws IOException {
+    public void testNoArgs() throws IOException {
         PipedInputStream in = new PipedInputStream();
         PipedOutputStream out;
         out = new PipedOutputStream(in);
         Shell.eval("ls", out);
-        ArrayList<String> expecteds = new ArrayList<>(Arrays.asList("tools", "system_test", "Dockerfile", "target", "apps.svg", "pom.xml", "README.md", "sh", "test_files", "action.yml", "src"));
-        // ArrayList<String> actual = new ArrayList<>();
+        HashSet<String> expecteds = new HashSet<>(Arrays.asList("tools", "system_test", "Dockerfile", "target", "apps.svg", "pom.xml", "README.md", "sh", "test_files", "action.yml", "src"));
         Scanner scn = new Scanner(in);
         scn.useDelimiter("\t");
-
-        for (String expected : expecteds) {
-            assertEquals(expected, scn.next());
+        for (int i = 0; i < expecteds.size(); i++) {
+            String tmp = scn.next();
+            System.out.println(tmp);
+            assertTrue(expecteds.contains(tmp));
         }
-
         scn.close();
     }
 
@@ -39,14 +38,12 @@ public class LsTest {
         PipedOutputStream out;
         out = new PipedOutputStream(in);
         Shell.eval("ls test_files", out);
-        ArrayList<String> expecteds = new ArrayList<>(Arrays.asList("test1.txt", "test2.txt", "test3.txt"));
+        HashSet<String> expecteds = new HashSet<>(Arrays.asList("test1.txt", "test2.txt", "test3.txt"));
         Scanner scn = new Scanner(in);
         scn.useDelimiter("\t");
-
-        for (String expected : expecteds) {
-            assertEquals(expected, scn.next());
+        for (int i = 0; i < expecteds.size(); i++) {
+            assertTrue(expecteds.contains(scn.next()));
         }
-
         scn.close();
     }
 
@@ -56,5 +53,13 @@ public class LsTest {
         PipedOutputStream out;
         out = new PipedOutputStream(in);
         Shell.eval("ls hello", out);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testTooManyArguments() throws IOException {
+        PipedInputStream in = new PipedInputStream();
+        PipedOutputStream out;
+        out = new PipedOutputStream(in);
+        Shell.eval("ls one two", out);
     }
 }
