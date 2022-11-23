@@ -1,6 +1,6 @@
 import csv
 
-print("\npackage\tclass\tinstructions\tbranches")
+print("package | class | instructions | branches")
 
 filename = 'target/site/jacoco/jacoco.csv'
 with open(filename) as f:
@@ -23,7 +23,7 @@ with open(filename) as f:
         missed_branches += int(values[5])
         total_branches += int(values[5]) + int(values[6])
 
-        print(val_package, val_class, val_instructions, val_branches)
+        print(val_package, "|", val_class, "|", val_instructions, "|", val_branches)
     
     cov_instructions = 100 - round(missed_instructions/total_instructions*100)
     cov_branches = 100 - round(missed_branches/total_branches*100)
