@@ -20,12 +20,12 @@ import uk.ac.ucl.shell.applications.ApplicationFactory;
 
 public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream> {
     private InputStream input;
-    
+
     @Override
     public ByteArrayOutputStream visitSequence(SequenceContext ctx) {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        for(ParseTree child : ctx.children) {
+        for (ParseTree child : ctx.children) {
             input = null;
 
             var childOutput = child.accept(this);
@@ -33,7 +33,8 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
             try {
                 output.write(childOutput.toByteArray());
                 childOutput.close();
-            } catch(Exception ex){}
+            } catch (Exception ex) {
+            }
         }
 
         return output;
@@ -45,8 +46,8 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        for(ParseTree child : ctx.children) {
-            if(child.getText().startsWith("|")) {
+        for (ParseTree child : ctx.children) {
+            if (child.getText().startsWith("|")) {
                 continue;
             }
 
@@ -63,7 +64,7 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
 
         List<String> args = new ArrayList<String>();
 
-        for(ParseTree child : ctx.children.subList(1, ctx.children.size())) {
+        for (ParseTree child : ctx.children.subList(1, ctx.children.size())) {
             args.add(child.getText());
         }
 
@@ -72,55 +73,71 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
 
         try {
             app.exec(args, input, output);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-        
+
         return stream;
     }
 
     @Override
     public ByteArrayOutputStream visitCall(CallContext ctx) {
-        if(ctx.getChildCount() == 1){
+        if (ctx.getChildCount() == 1) {
             return super.visitCall(ctx);
-        } else if(ctx.getChildCount() > 3) {
+        } else if (ctx.getChildCount() > 3) {
             throw new RuntimeException("Invalid call arguments!");
         }
 
-        String fileName = ctx.getChild(1).getText();
+        File inputFile = null;
+        File outputFile = null;
 
-        if(!fileName.startsWith("<")) throw new RuntimeException("idk?");
+        if (ctx.getChildCount() == 3) {
+            String inputFileName = ctx.getChild(1).getText();
+            String outputFileName = ctx.getChild(2).getText();
 
-        fileName = fileName.substring(1, fileName.length());
+            if (!inputFileName.startsWith("<"))
+                throw new RuntimeException("idk");
 
-        File file = Shell.getCurrentDirectory().resolve(fileName).toFile();
-        try{
-            if (file.exists()) {
-                input = new FileInputStream(file);
-    
-                ByteArrayOutputStream output = ctx.getChild(0).accept(this);
-    
-                if(ctx.getChildCount() == 3) {
-                    String outputFileName = ctx.getChild(2).getText();
-    
-                    if(!outputFileName.startsWith(">")) throw new RuntimeException("idk?");
-    
-                    outputFileName = outputFileName.substring(1, outputFileName.length());
-    
-                    FileOutputStream outputFile = new FileOutputStream(Shell.getCurrentDirectory().resolve(outputFileName).toFile());
-    
-                    outputFile.write(output.toByteArray());
-                    outputFile.close();
+            if (!outputFileName.startsWith("<"))
+                throw new RuntimeException("idk");
 
-                    return null;
-                }
-    
-                return output;
+            inputFile = Shell.getCurrentDirectory().resolve(inputFileName.substring(1, inputFileName.length()))
+                    .toFile();
+            outputFile = Shell.getCurrentDirectory().resolve(outputFileName.substring(1, outputFileName.length()))
+                    .toFile();
+        } else {
+            String fileName = ctx.getChild(1).getText();
+
+            if (fileName.startsWith("<")) {
+                inputFile = Shell.getCurrentDirectory().resolve(fileName.substring(1, fileName.length())).toFile();
             } else {
-                throw new RuntimeException("call: file does not exist " + file.getPath());
+                outputFile = Shell.getCurrentDirectory().resolve(fileName.substring(1, fileName.length())).toFile();
             }
-        } catch(Exception ex) {
-            throw new RuntimeException(ex);
+        }
+
+        try {
+            if (inputFile != null) {
+                if (inputFile.exists()) {
+                    input = new FileInputStream(inputFile);
+                } else {
+                    throw new RuntimeException("call: file does not exist " + inputFile.getPath());
+                }
+            }
+
+            ByteArrayOutputStream output = ctx.getChild(0).accept(this);
+
+            if (outputFile != null) {
+                FileOutputStream outputStream = new FileOutputStream(outputFile);
+
+                outputStream.write(output.toByteArray());
+                outputStream.close();
+
+                return null;
+            }
+
+            return output;
+        } catch (Exception ex) {
+            throw new RuntimeException("idk");
         }
     }
 }
