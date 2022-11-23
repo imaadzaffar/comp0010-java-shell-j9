@@ -15,3 +15,9 @@ jobs:
         run: docker build -t comp0010-system-test .
       - name: Run system test
         run: python3 system_test/tests.py -v
+      - name: Run unit tests
+        run: docker run -p 80:8000 -ti --rm shell /comp0010/tools/test
+      - name: Run analysis tests
+        run: docker run -p 80:8000 -ti --rm shell /comp0010/tools/analysis
+      - name: Run coverage tests
+        run: docker run -p 80:8000 -ti --rm shell /comp0010/tools/coverage
