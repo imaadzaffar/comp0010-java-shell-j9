@@ -26,7 +26,7 @@ public class Cut implements Application {
 
         for (String interval : intervals) {
             try {
-                if (Integer.parseInt(interval) <= 0) {
+                if (Integer.parseInt(interval) == 0) {
                     throw new RuntimeException("cut: wrong argument");
                 }
             } catch (IllegalArgumentException e) {
