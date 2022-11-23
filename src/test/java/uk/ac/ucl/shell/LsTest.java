@@ -12,8 +12,7 @@ import java.util.HashSet;
 import java.util.Scanner;
 
 public class LsTest {
-    public LsTest() {
-    }
+    public LsTest() {}
 
     @Test
     public void testNoArgs() throws IOException {
@@ -36,7 +35,7 @@ public class LsTest {
         PipedOutputStream out;
         out = new PipedOutputStream(in);
         Shell.eval("ls test_files", out);
-        HashSet<String> expecteds = new HashSet<>(Arrays.asList("test1.txt", "test2.txt", "test3.txt"));
+        HashSet<String> expecteds = new HashSet<>(Arrays.asList("test1.txt", "test2.txt", "test3.txt", "test4.txt"));
         Scanner scn = new Scanner(in);
         scn.useDelimiter("\t");
         for (int i = 0; i < expecteds.size(); i++) {

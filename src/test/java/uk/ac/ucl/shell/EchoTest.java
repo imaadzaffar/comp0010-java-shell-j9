@@ -10,8 +10,7 @@ import java.io.PipedOutputStream;
 import java.util.Scanner;
 
 public class EchoTest {
-    public EchoTest() {
-    }
+    public EchoTest() {}
 
     @Test
     public void testEmpty() throws IOException {

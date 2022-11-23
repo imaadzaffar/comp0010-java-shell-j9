@@ -47,7 +47,6 @@ public class Uniq implements Application {
             if(i < lines.size() - 1 && (invariant ? lines.get(i).equalsIgnoreCase(lines.get(i + 1)) : lines.get(i).equals(lines.get(i + 1)))) {
                 continue;
             }
-
             output.write(lines.get(i));
             output.write(System.getProperty("line.separator"));
             output.flush();

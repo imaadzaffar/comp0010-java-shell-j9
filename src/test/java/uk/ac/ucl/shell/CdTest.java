@@ -9,8 +9,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
 public class CdTest {
-    public CdTest() {
-    }
+    public CdTest() {}
 
     @Test(expected = RuntimeException.class)
     public void testNoArgs() throws IOException {
@@ -18,15 +17,6 @@ public class CdTest {
         PipedOutputStream out;
         out = new PipedOutputStream(in);
         Shell.eval("cd", out);
-    }
-
-    @Test
-    public void testWithCurrentDirectory() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("cd .", out);
-        assertEquals("java-shell-j9", Shell.getCurrentDirectory().getFileName().toString());
     }
 
     @Test
