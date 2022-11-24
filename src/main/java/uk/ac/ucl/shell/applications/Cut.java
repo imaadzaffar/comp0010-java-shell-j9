@@ -20,17 +20,20 @@ public class Cut implements Application {
 
         String[] intervals = args.get(1).split(",");
 
-        if (intervals.length == 0) {
-            throw new RuntimeException("cut: wrong argument");
-        }
+//        if (intervals.length == 0) {
+//            throw new RuntimeException("cut: wrong argument");
+//        }
 
         for (String interval : intervals) {
-            try {
-                if (Integer.parseInt(interval) == 0) {
+            String[] values = interval.split("-");
+            for (String value : values) {
+                try {
+                    if (!value.equals("") && Integer.parseInt(value) == 0) {
+                        throw new RuntimeException("cut: wrong argument");
+                    }
+                } catch (NumberFormatException e) {
                     throw new RuntimeException("cut: wrong argument");
                 }
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException("cut: wrong argument");
             }
         }
         

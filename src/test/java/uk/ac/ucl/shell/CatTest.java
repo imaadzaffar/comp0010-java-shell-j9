@@ -39,6 +39,18 @@ public class CatTest {
     // }
 
     @Test
+    public void testFileError() throws IOException {
+        PipedInputStream in = new PipedInputStream();
+        PipedOutputStream out;
+        out = new PipedOutputStream(in);
+        try {
+            Shell.eval("cat src", out);
+        } catch (RuntimeException e) {
+            assertEquals(e.toString(), "java.lang.RuntimeException: cat: cannot open " + Shell.getCurrentDirectory().toString() + "/src");
+        }
+    }
+
+    @Test
     public void testSingleArg() throws IOException {
         PipedInputStream in = new PipedInputStream();
         PipedOutputStream out;
