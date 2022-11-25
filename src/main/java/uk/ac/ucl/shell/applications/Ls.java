@@ -26,11 +26,13 @@ public class Ls implements Application {
 
         File[] listOfFiles = currDir.listFiles();
 
-        for (File file : listOfFiles) {
-            if (!file.getName().startsWith(".")) {
-                output.write(file.getName());
-                output.write("\t");
-                output.flush();
+        if (listOfFiles != null) {
+            for (File file : listOfFiles) {
+                if (!file.getName().startsWith(".")) {
+                    output.write(file.getName());
+                    output.write("\t");
+                    output.flush();
+                }
             }
         }
 

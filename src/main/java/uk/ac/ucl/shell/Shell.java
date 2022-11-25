@@ -34,12 +34,10 @@ public class Shell {
 
         ByteArrayOutputStream stream = visitor.visit(tree);
 
-        if(stream != null) {
+        if (stream != null) {
             OutputStreamWriter writer = new OutputStreamWriter(output);
-
             writer.write(stream.toString());
-            writer.flush();    
-            
+            writer.flush();
             stream.close();
         }
     }

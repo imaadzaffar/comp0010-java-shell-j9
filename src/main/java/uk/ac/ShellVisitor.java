@@ -1,12 +1,6 @@
 package uk.ac;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,14 +12,16 @@ import uk.ac.ucl.shell.ShellGrammarParser.*;
 import uk.ac.ucl.shell.applications.Application;
 import uk.ac.ucl.shell.applications.ApplicationFactory;
 
-public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream> {
+public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>  {
     private InputStream input;
 
     @Override
     public ByteArrayOutputStream visitSequence(SequenceContext ctx) {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
+        // MANY ERRORS STEM FROM THIS FOR LOOP
         for (ParseTree child : ctx.children) {
+            // resets sequence input stream to null
             input = null;
 
             var childOutput = child.accept(this);
@@ -33,20 +29,22 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
             try {
                 output.write(childOutput.toByteArray());
                 childOutput.close();
-            } catch (Exception ex) {
+            } catch (IOException e) {
+                // this exception must be properly caught or sent up the stack trace
             }
         }
-
         return output;
     }
 
     @Override
     public ByteArrayOutputStream visitPipe(PipeContext ctx) {
-        Collections.reverse(ctx.children);
+
+//        Collections.reverse(ctx.children);
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         for (ParseTree child : ctx.children) {
+            // skips over pipe characters
             if (child.getText().startsWith("|")) {
                 continue;
             }
@@ -61,9 +59,9 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
     @Override
     public ByteArrayOutputStream visitArgument(ArgumentContext ctx) {
         Application app = new ApplicationFactory().getApp(ctx.getChild(0).getText());
+        List<String> args = new ArrayList<>();
 
-        List<String> args = new ArrayList<String>();
-
+        // omits the application from the list of arguments
         for (ParseTree child : ctx.children.subList(1, ctx.children.size())) {
             args.add(child.getText());
         }
@@ -85,7 +83,7 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
         if (ctx.getChildCount() == 1) {
             return super.visitCall(ctx);
         } else if (ctx.getChildCount() > 3) {
-            throw new RuntimeException("Invalid call arguments!");
+            throw new RuntimeException("call: wrong call arguments");
         }
 
         File inputFile = null;

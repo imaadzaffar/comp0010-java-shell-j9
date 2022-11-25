@@ -1,5 +1,8 @@
 package uk.ac.ucl.shell.commands;
 
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+
 public interface Command {
-    void eval(String input, String output);
+    void eval(InputStream input, OutputStreamWriter output);
 }
