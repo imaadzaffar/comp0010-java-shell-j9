@@ -29,6 +29,8 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
             input = null;
             var childOutput = child.accept(this);
 
+            if(childOutput == null) continue;
+
             try {
                 output.write(childOutput.toByteArray());
                 childOutput.close();
@@ -90,41 +92,36 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
 
         File inputFile = null;
         File outputFile = null;
+        ParseTree command = null;
 
-        if (ctx.getChildCount() == 3) {
-            String inputFileName = ctx.getChild(1).getText();
-            String outputFileName = ctx.getChild(2).getText();
+        for(ParseTree child : ctx.children) {
+            String text = child.getText();
 
-            if (!inputFileName.startsWith("<"))
-                throw new RuntimeException("idk");
-
-            if (!outputFileName.startsWith("<"))
-                throw new RuntimeException("idk");
-
-            inputFile = Shell.getCurrentDirectory().resolve(inputFileName.substring(1, inputFileName.length()))
+            if (text.startsWith("<")) {
+                inputFile = Shell.getCurrentDirectory().resolve(text.substring(1, text.length()))
                     .toFile();
-            outputFile = Shell.getCurrentDirectory().resolve(outputFileName.substring(1, outputFileName.length()))
+            } else if(text.startsWith(">")) {
+                outputFile = Shell.getCurrentDirectory().resolve(text.substring(1, text.length()))
                     .toFile();
-        } else {
-            String fileName = ctx.getChild(1).getText();
-
-            if (fileName.startsWith("<")) {
-                inputFile = Shell.getCurrentDirectory().resolve(fileName.substring(1, fileName.length())).toFile();
             } else {
-                outputFile = Shell.getCurrentDirectory().resolve(fileName.substring(1, fileName.length())).toFile();
+                command = child;
+            }
+        }
+
+        if(command == null || (inputFile == null && outputFile == null)) {
+            throw new RuntimeException("call: wrong call arguments");
+        }
+
+        if (inputFile != null) {
+            try {
+                input = new FileInputStream(inputFile);
+            } catch (Exception ex) {
+                throw new RuntimeException("call: file does not exist " + inputFile.getPath());
             }
         }
 
         try {
-            if (inputFile != null) {
-                if (inputFile.exists()) {
-                    input = new FileInputStream(inputFile);
-                } else {
-                    throw new RuntimeException("call: file does not exist " + inputFile.getPath());
-                }
-            }
-
-            ByteArrayOutputStream output = ctx.getChild(0).accept(this);
+            ByteArrayOutputStream output = command.accept(this);
 
             if (outputFile != null) {
                 FileOutputStream outputStream = new FileOutputStream(outputFile);
@@ -137,7 +134,7 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
 
             return output;
         } catch (Exception ex) {
-            throw new RuntimeException("idk");
+            throw new RuntimeException("call: failed to write to outfile file " + outputFile.getPath());
         }
     }
 }
