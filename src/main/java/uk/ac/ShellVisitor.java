@@ -11,6 +11,7 @@ import uk.ac.ucl.shell.ShellGrammarBaseVisitor;
 import uk.ac.ucl.shell.ShellGrammarParser.*;
 import uk.ac.ucl.shell.applications.Application;
 import uk.ac.ucl.shell.applications.ApplicationFactory;
+import uk.ac.ucl.shell.commands.Globbing;
 
 public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>  {
     private InputStream input;
@@ -59,7 +60,7 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
     @Override
     public ByteArrayOutputStream visitArgument(ArgumentContext ctx) {
         Application app = new ApplicationFactory().getApp(ctx.getChild(0).getText());
-        List<String> args = new ArrayList<>();
+        ArrayList<String> args = new ArrayList<>();
 
         // omits the application from the list of arguments
         for (ParseTree child : ctx.children.subList(1, ctx.children.size())) {
@@ -70,6 +71,8 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
         var output = new OutputStreamWriter(stream);
 
         try {
+            Globbing globbing = new Globbing();
+            args = globbing.glob(args);
             app.exec(args, input, output);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
