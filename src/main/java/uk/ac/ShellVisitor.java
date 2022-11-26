@@ -22,9 +22,11 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
 
         // MANY ERRORS STEM FROM THIS FOR LOOP
         for (ParseTree child : ctx.children) {
+            if (child.getText().startsWith(";")) {
+                continue;
+            }
             // resets sequence input stream to null
             input = null;
-
             var childOutput = child.accept(this);
 
             try {
@@ -39,9 +41,6 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
 
     @Override
     public ByteArrayOutputStream visitPipe(PipeContext ctx) {
-
-//        Collections.reverse(ctx.children);
-
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         for (ParseTree child : ctx.children) {
