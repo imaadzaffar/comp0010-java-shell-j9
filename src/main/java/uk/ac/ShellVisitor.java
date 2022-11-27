@@ -120,7 +120,7 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
                 if (inputFile.exists()) {
                     input = new FileInputStream(inputFile);
                 } else {
-                    throw new RuntimeException("call: file does not exist " + inputFile.getPath());
+                    throw new RuntimeException("call - file does not exist " + inputFile.getPath());
                 }
             }
 

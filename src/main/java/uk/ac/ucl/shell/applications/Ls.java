@@ -1,12 +1,12 @@
 package uk.ac.ucl.shell.applications;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.List;
 
 import uk.ac.ucl.shell.Shell;
+import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
+import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 public class Ls implements Application {
     @Override
@@ -17,11 +17,11 @@ public class Ls implements Application {
         } else if (args.size() == 1) {
             currDir = Shell.getCurrentDirectory().resolve(args.get(0)).toFile();
         } else {
-            throw new RuntimeException("ls: too many arguments");
+            throw new TooManyArgumentsException("ls");
         }
         
         if(!currDir.exists()) {
-            throw new RuntimeException("ls: no such directory");
+            throw new FileNotFoundException("ls", currDir.getPath());
         }
 
         File[] listOfFiles = currDir.listFiles();

@@ -1,21 +1,21 @@
 package uk.ac.ucl.shell.applications;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import uk.ac.ucl.shell.Shell;
+import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
+import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 public class Uniq implements Application {
 
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if (args.size() > 2) { 
-            throw new RuntimeException("uniq: invalid arguments");
+            throw new TooManyArgumentsException("uniq");
         }
 
         boolean invariant = !args.isEmpty() && args.get(0).equals("-i");
@@ -36,10 +36,10 @@ public class Uniq implements Application {
                         lines.add(reader.nextLine());
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException("uniq: cannot open " + file.getPath());
+                    throw new CannotOpenFileException("uniq", file.getPath());
                 }
             } else {
-                throw new RuntimeException("uniq: file does not exist");
+                throw new FileNotFoundException("uniq", file.getPath());
             }
         }
 

@@ -1,5 +1,7 @@
 package uk.ac.ucl.shell.applications;
 
+import uk.ac.ucl.shell.exceptions.UnknownApplicationException;
+
 public class ApplicationFactory {
     public Application getApp(String appName) {
         boolean unsafe = false;
@@ -22,7 +24,7 @@ public class ApplicationFactory {
             case "sort" -> new Sort();
             case "uniq" -> new Uniq();
             case "cut" -> new Cut();
-            default -> throw new RuntimeException(appName + ": unknown application");
+            default -> throw new UnknownApplicationException(appName);
         };
 
         return unsafe ? new UnsafeDecorator(application) : application;
