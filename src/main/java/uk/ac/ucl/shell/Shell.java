@@ -32,7 +32,6 @@ public class Shell {
         ShellGrammarParser parser = new ShellGrammarParser(tokenStream);
         ParseTree tree = parser.shell();
         ShellVisitor visitor = new ShellVisitor();
-
         ByteArrayOutputStream stream = visitor.visit(tree);
 
         if (stream != null) {
