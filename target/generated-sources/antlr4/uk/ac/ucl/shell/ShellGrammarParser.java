@@ -17,7 +17,7 @@ public class ShellGrammarParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, SINGLEQUOTED=5, DOUBLEQUOTED=6, BACKQUOTED=7, 
+		T__0=1, T__1=2, T__2=3, T__3=4, DOUBLEQUOTED=5, SINGLEQUOTED=6, BACKQUOTED=7, 
 		UNQUOTED=8, WS=9;
 	public static final int
 		RULE_shell = 0, RULE_sequence = 1, RULE_command = 2, RULE_pipe = 3, RULE_call = 4, 
@@ -31,7 +31,7 @@ public class ShellGrammarParser extends Parser {
 		null, "';'", "'|'", "'<'", "'>'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, "SINGLEQUOTED", "DOUBLEQUOTED", "BACKQUOTED", 
+		null, null, null, null, null, "DOUBLEQUOTED", "SINGLEQUOTED", "BACKQUOTED", 
 		"UNQUOTED", "WS"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
@@ -108,7 +108,7 @@ public class ShellGrammarParser extends Parser {
 			setState(19);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__3) | (1L << SINGLEQUOTED) | (1L << DOUBLEQUOTED) | (1L << BACKQUOTED) | (1L << UNQUOTED) | (1L << WS))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__2) | (1L << T__3) | (1L << DOUBLEQUOTED) | (1L << SINGLEQUOTED) | (1L << BACKQUOTED) | (1L << UNQUOTED) | (1L << WS))) != 0)) {
 				{
 				setState(18);
 				sequence();
@@ -465,8 +465,8 @@ public class ShellGrammarParser extends Parser {
 				redirection();
 				}
 				break;
-			case SINGLEQUOTED:
 			case DOUBLEQUOTED:
+			case SINGLEQUOTED:
 			case BACKQUOTED:
 			case UNQUOTED:
 				enterOuterAlt(_localctx, 2);
@@ -529,8 +529,8 @@ public class ShellGrammarParser extends Parser {
 					setState(83);
 					_errHandler.sync(this);
 					switch (_input.LA(1)) {
-					case SINGLEQUOTED:
 					case DOUBLEQUOTED:
+					case SINGLEQUOTED:
 					case BACKQUOTED:
 						{
 						setState(81);
@@ -680,7 +680,7 @@ public class ShellGrammarParser extends Parser {
 			{
 			setState(105);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SINGLEQUOTED) | (1L << DOUBLEQUOTED) | (1L << BACKQUOTED))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << DOUBLEQUOTED) | (1L << SINGLEQUOTED) | (1L << BACKQUOTED))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {

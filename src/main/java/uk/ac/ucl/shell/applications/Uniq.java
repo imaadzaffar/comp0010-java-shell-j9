@@ -43,13 +43,11 @@ public class Uniq implements Application {
             }
         }
 
-        String prevComparison = "";
         for (int i = 0; i < lines.size(); i++) {
-            if(i != 0 && (invariant ? lines.get(i).equalsIgnoreCase(prevComparison) : lines.get(i).equals(prevComparison))) {
+            if(i != 0 && (invariant ? lines.get(i).equalsIgnoreCase(lines.get(i - 1)) : lines.get(i).equals(lines.get(i - 1)))) {
                 continue;
             }
 
-            prevComparison = lines.get(i);
             output.write(lines.get(i));
             output.write(System.getProperty("line.separator"));
             output.flush();

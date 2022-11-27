@@ -81,7 +81,7 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
         var output = new OutputStreamWriter(stream);
 
         try {
-            args = Globbing.glob(args);
+            args = new Globbing().glob(args);
             app.exec(args, input, output);
         } catch (Exception ex) {
             throw new RuntimeException(ex);

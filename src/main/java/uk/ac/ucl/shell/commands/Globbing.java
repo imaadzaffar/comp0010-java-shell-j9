@@ -3,47 +3,63 @@ package uk.ac.ucl.shell.commands;
 import uk.ac.ucl.shell.Shell;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.PathMatcher;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
-public class Globbing {
-    public static ArrayList<String> glob(ArrayList<String> rawArguments) throws IOException {
-        String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";
-        ArrayList<String> tokens = new ArrayList<>();
-        Pattern regex = Pattern.compile(spaceRegex);
-        for (String argument : rawArguments) {
-            Matcher regexMatcher = regex.matcher(argument);
-            String nonQuote;
-            while (regexMatcher.find()) {
-                if (regexMatcher.group(1) != null || regexMatcher.group(2) != null) {
-                    String quoted = regexMatcher.group(0).trim();
-                    tokens.add(quoted.substring(1, quoted.length() - 1));
+public class Globbing extends SimpleFileVisitor<Path> {
+    List<String> matches;
+    PathMatcher fileMatcher;
+    PathMatcher dirMatcher;
 
-                } else {
-                    nonQuote = regexMatcher.group().trim();
-                    ArrayList<String> globbingResult = new ArrayList<>();
-                    Path dir = Paths.get(Shell.getCurrentDirectory().toString());
-                    DirectoryStream<Path> stream = Files.newDirectoryStream(dir, nonQuote);
+    public ArrayList<String> glob(ArrayList<String> args) throws IOException {
+        ArrayList<String> globbedArgs = new ArrayList<>();
 
-                    for (Path entry : stream) {
-                        globbingResult.add(entry.getFileName().toString());
-                    }
-
-                    if (globbingResult.isEmpty()) {
-                        globbingResult.add(nonQuote);
-                    }
-                    tokens.addAll(globbingResult);
-                }
+        for(String arg : args) {
+            if(!arg.contains("*") || (globbedArgs.size() > 0 && globbedArgs.get(globbedArgs.size() - 1).startsWith("-"))) {
+                globbedArgs.add(arg);
+                continue;
             }
+
+            matches = new ArrayList<String>();
+
+            fileMatcher = FileSystems.getDefault().getPathMatcher("glob:" + arg);
+            dirMatcher = arg.contains("/") ? FileSystems.getDefault().getPathMatcher("glob:" + arg.substring(0, arg.lastIndexOf("/"))) : null;
+
+            Files.walkFileTree(Shell.getCurrentDirectory(), this);
+
+            globbedArgs.addAll(matches);
         }
 
-        return tokens;
+        return globbedArgs;
+    }
+
+    @Override
+    public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attr) throws IOException {
+        Path name = Shell.getCurrentDirectory().relativize(directory);
+
+        if (fileMatcher.matches(name)) {
+            matches.add(name.toString().replace("\\", "/"));
+        }
+
+        return FileVisitResult.CONTINUE;
+    }
+
+    @Override
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attr) throws IOException {
+        Path name = Shell.getCurrentDirectory().relativize(file);
+        Path directory = Shell.getCurrentDirectory().relativize(file).getParent();
+
+        if (fileMatcher.matches(name) && (name.getNameCount() == 1 || (dirMatcher != null && dirMatcher.matches(directory)))) {
+            matches.add(name.toString().replace("\\", "/"));
+        }
+
+        return FileVisitResult.CONTINUE;
     }
 }
