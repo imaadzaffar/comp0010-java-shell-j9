@@ -4,28 +4,37 @@ grammar ImaadShellGrammar;
  * Parser Rules
  */
 
-command : pipe | seq | call;
-pipe : call '|' call | pipe '|' call;
-seq  : command ';' command;
-call : ( nonKeyword | quoted ) *;
+shell: command (';' command)*;
+command : pipe | call;
+pipe : call ('|' call)+;
 
-call : [ whitespace ] [ redirection whitespace ]* argument [ whitespace atom ]* [ whitespace ];
+call : WHITESPACE* ( redirection WHITESPACE )* argument ( WHITESPACE atom )* WHITESPACE*;
 atom : redirection | argument;
-argument : ( quoted | unquoted )+;
-redirection : '<' [ whitespace ] argument
-    | '>' [ whitespace ] argument;
+argument : ( quoted | nonKeyword )+;
+redirection  : '<' WHITESPACE argument #inputRedirection
+             | '>' WHITESPACE argument #outputRedirection
+             ;
 
-quoted : singleQuoted | doubleQuoted | backquoted;
-singleQuoted : '\'' nonNewline and nonSingleQuote '\'';
-backquoted : '`' nonNewline and nonBackquote '`';
-doubleQuoted : '"' ( backquoted | doubleQuoteContent ) * '"';
+quoted : singleQuoted | doubleQuotedAux | backQuoted;
+
+singleQuoted : SINGLE_QUOTED;
+
+doubleQuotedAux : doubleQuotedFinal | doubleQuotedSub;
+doubleQuotedFinal : DOUBLE_QUOTED;
+doubleQuotedSub : '"' (nonKeyword)* WHITESPACE* backQuoted WHITESPACE* (nonKeyword)* '"';
+
+backQuoted : '`' subCommand '`';
+subCommand : argument (WHITESPACE argument)*;
+
+nonKeyword : NON_KEYWORD;
 
 /*
  * Lexer Rules
  */
 
-SINGLEQUOTED : '\'' ~['\n]+ '\'';
-DOUBLEQUOTED : '"' (~["`\n]+ | BACKQUOTED)* '"';
-BACKQUOTED :'`' ~[`\n]+ '`';
-UNQUOTED : ~[ \t\n'`";><|]+;
-WS : (' ' | '\t') -> channel(HIDDEN);
+DOUBLE_QUOTED : '"' ~[\n'`]+ '"';
+SINGLE_QUOTED : '\'' ~[\n']+ '\'';
+//BACKQUOTED : '`' ~[\n`]+ '`';
+
+NON_KEYWORD : ~[ \t\n'`";><|]+;
+WHITESPACE : [ \t\n] -> channel(HIDDEN);
