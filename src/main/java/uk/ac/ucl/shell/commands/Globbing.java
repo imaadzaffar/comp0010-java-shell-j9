@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Globbing {
-    public ArrayList<String> glob(ArrayList<String> rawArguments) throws IOException {
+    public static ArrayList<String> glob(ArrayList<String> rawArguments) throws IOException {
         String spaceRegex = "[^\\s\"']+|\"([^\"]*)\"|'([^']*)'";
         ArrayList<String> tokens = new ArrayList<>();
         Pattern regex = Pattern.compile(spaceRegex);
@@ -43,7 +43,7 @@ public class Globbing {
                 }
             }
         }
-        return tokens;
 
+        return tokens;
     }
 }

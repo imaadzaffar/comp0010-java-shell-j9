@@ -12,6 +12,7 @@ import uk.ac.ucl.shell.ShellGrammarParser.*;
 import uk.ac.ucl.shell.applications.Application;
 import uk.ac.ucl.shell.applications.ApplicationFactory;
 import uk.ac.ucl.shell.commands.Globbing;
+import uk.ac.ucl.shell.commands.Substitution;
 
 public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>  {
     private InputStream input;
@@ -60,20 +61,27 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
 
     @Override
     public ByteArrayOutputStream visitArgument(ArgumentContext ctx) {
-        Application app = new ApplicationFactory().getApp(ctx.getChild(0).getText());
         ArrayList<String> args = new ArrayList<>();
 
         // omits the application from the list of arguments
-        for (ParseTree child : ctx.children.subList(1, ctx.children.size())) {
+        for (ParseTree child : ctx.children) {
             args.add(child.getText());
         }
+
+        try {
+            args = Substitution.sub(args);
+        } catch (Exception ex) {
+            throw new RuntimeException("error during substitution: " + ex);
+        }
+
+        Application app = new ApplicationFactory().getApp(args.get(0));
+        args.remove(0);
 
         var stream = new ByteArrayOutputStream();
         var output = new OutputStreamWriter(stream);
 
         try {
-            Globbing globbing = new Globbing();
-            args = globbing.glob(args);
+            args = Globbing.glob(args);
             app.exec(args, input, output);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
