@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -31,7 +32,6 @@ public class Shell {
         ShellGrammarParser parser = new ShellGrammarParser(tokenStream);
         ParseTree tree = parser.shell();
         ShellVisitor visitor = new ShellVisitor();
-
         ByteArrayOutputStream stream = visitor.visit(tree);
 
         if (stream != null) {
@@ -64,6 +64,9 @@ public class Shell {
                     try {
                         String cmdline = input.nextLine();
                         eval(cmdline, System.out);
+                    } catch (NoSuchElementException e) {
+                        input.close();
+                        break;
                     } catch (Exception e) {
                         System.out.println("COMP0010 shell: " + e.getMessage());
                     }
