@@ -61,13 +61,17 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
 
     @Override
     public ByteArrayOutputStream visitArgument(ArgumentContext ctx) {
+        boolean substituted = false;
+
         ArrayList<String> args = new ArrayList<>();
 
         // omits the application from the list of arguments
         for (ParseTree child : ctx.children) {
             args.add(child.getText());
-        }
 
+            substituted = substituted || child.getText().contains("`");
+        }
+        
         try {
             args = Substitution.sub(args);
         } catch (Exception ex) {
@@ -81,7 +85,9 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
         var output = new OutputStreamWriter(stream);
 
         try {
-            args = new Globbing().glob(args);
+            if(!substituted) {
+                args = new Globbing().glob(args);
+            }
             app.exec(args, input, output);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
