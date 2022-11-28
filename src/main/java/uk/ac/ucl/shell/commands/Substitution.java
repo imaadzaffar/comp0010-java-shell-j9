@@ -47,7 +47,7 @@ public class Substitution {
 
             tempArgument.append(argument.substring(endIndex + 1));
 
-            res.add(tempArgument.toString());
+            res.add(tempArgument.toString().trim().replace(System.getProperty("line.separator"), " "));
             tempArgument.setLength(0);
         }
 

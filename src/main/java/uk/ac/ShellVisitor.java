@@ -73,7 +73,7 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
         }
         
         try {
-            args = Substitution.sub(args);
+            args = Substitution.sub(args);    
         } catch (Exception ex) {
             throw new RuntimeException("error during substitution: " + ex);
         }
