@@ -1,17 +1,28 @@
 grammar ShellGrammar;
+options { contextSuperClass=ShellRuleContext; }
 
 /*
  * Parser Rules
  */
 
-command : atomicCommand (';' atomicCommand)*;
+shell : sequence?;
+sequence : command (';' command)*;
+command : pipe | call;
+pipe : call ('|' call)+;
 
-atomicCommand : (NONSPECIAL | DOUBLEQUOTED | SINGLEQUOTED)+;
+call : WS* (redirection WS*)* argument (WS* atom)* WS*;
+
+atom : redirection | argument;
+argument : (quoted | UNQUOTED)+;
+redirection : '<' WS* argument | '>' WS* argument;
+quoted : SINGLEQUOTED | DOUBLEQUOTED | BACKQUOTED;
 
 /*
  * Lexer Rules
  */
 
-NONSPECIAL : ~['";]+;
-DOUBLEQUOTED : '"' (~'"')* '"';
-SINGLEQUOTED : '\'' (~'\'')* '\'';
+DOUBLEQUOTED : UNQUOTED* '"' (~["`\n]* BACKQUOTED? ~["`\n]*) '"' UNQUOTED*;
+SINGLEQUOTED : UNQUOTED* '\'' ~['\n]* '\'' UNQUOTED*;
+BACKQUOTED : UNQUOTED* '`' ~[`\n]* '`' UNQUOTED*;
+UNQUOTED : ~[ \t\n'`";><|]+;
+WS : (' ' | '\t') -> channel(HIDDEN);
