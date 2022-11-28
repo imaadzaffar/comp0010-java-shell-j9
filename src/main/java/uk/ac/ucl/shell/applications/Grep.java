@@ -1,20 +1,20 @@
 package uk.ac.ucl.shell.applications;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.Scanner;
 
 import uk.ac.ucl.shell.Shell;
+import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
+import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 
 public class Grep implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if (args.size() < 1) {
-            throw new RuntimeException("grep: invalid number of arguments");
+            throw new MissingArgumentsException("grep");
         }
 
         Pattern grepPattern = Pattern.compile(args.get(0));
@@ -51,10 +51,10 @@ public class Grep implements Application {
                             }
                         }
                     } catch (IOException e) {
-                        throw new RuntimeException("grep: cannot open " + file.getPath());
+                        throw new CannotOpenFileException("grep", file.getPath());
                     }
                 } else {
-                    throw new RuntimeException("grep: file does not exist " + file.getPath());
+                    throw new FileNotFoundException("grep", file.getPath());
                 }
             }
         }

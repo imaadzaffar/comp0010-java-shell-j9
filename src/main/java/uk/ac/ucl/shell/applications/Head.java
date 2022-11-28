@@ -1,20 +1,24 @@
 package uk.ac.ucl.shell.applications;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import uk.ac.ucl.shell.Shell;
+import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
+import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.InvalidArgumentsException;
+import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
+import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 public class Head implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
-        if(args.size() > 3 || (args.size() > 1 && !args.get(0).equals("-n"))) {
-            throw new RuntimeException("head: invalid arguments");
+        if (args.size() > 3) {
+            throw new TooManyArgumentsException("head");
+        } else if ((args.size() > 1 && !args.get(0).equals("-n"))) {
+            throw new InvalidArgumentsException("head");
         }
 
         int lines = 10;
@@ -23,7 +27,7 @@ public class Head implements Application {
             try {
                 lines = Integer.parseInt(args.get(1));
             } catch (NumberFormatException e) {
-                throw new RuntimeException("head: invalid arguments");
+                throw new InvalidArgumentsException("head");
             }
         }
 
@@ -40,10 +44,10 @@ public class Head implements Application {
                 try (Scanner reader = new Scanner(file)) {
                     results = getLines(reader, lines);
                 } catch (IOException e) {
-                    throw new RuntimeException("head: cannot open " + file.getPath());
+                    throw new CannotOpenFileException("head", file.getPath());
                 }
             } else {
-                throw new RuntimeException("head: file does not exist");
+                throw new FileNotFoundException("head", file.getPath());
             }
         }
 

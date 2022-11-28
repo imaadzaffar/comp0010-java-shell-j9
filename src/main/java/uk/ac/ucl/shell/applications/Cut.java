@@ -6,23 +6,29 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.ByteArrayOutputStream;
 import java.util.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.lang.String;
 import uk.ac.ucl.shell.Shell;
+import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
+import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.InvalidArgumentsException;
+import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 
 public class Cut implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if ((args.size() <= 1) || !args.get(0).equals("-b")) {
-            throw new RuntimeException("cut: missing argument");
+            throw new MissingArgumentsException("cut");
         }
 
         String[] intervals = args.get(1).split(",");
-
-//        if (intervals.length == 0) {
-//            throw new RuntimeException("cut: wrong argument");
-//        }
 
         for (String interval : intervals) {
             String[] values = interval.split("-");
@@ -59,10 +65,10 @@ public class Cut implements Application {
                         output.flush();
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException("cut: cannot open " + file.getPath());
+                    throw new CannotOpenFileException("cut", file.getPath());
                 }
             } else {
-                throw new RuntimeException("cut: file does not exist");
+                throw new FileNotFoundException("cut", file.getPath());
             }
         }
     }
