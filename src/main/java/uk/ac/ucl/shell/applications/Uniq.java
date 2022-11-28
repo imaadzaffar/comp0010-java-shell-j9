@@ -20,9 +20,9 @@ public class Uniq implements Application {
 
         boolean invariant = !args.isEmpty() && args.get(0).equals("-i");
         
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         
-        if(args.size() == (invariant ? 1 : 0)) {
+        if (args.size() == (invariant ? 1 : 0)) {
             try (Scanner reader = new Scanner(input)) {
                 while (reader.hasNextLine()) {
                     lines.add(reader.nextLine());
@@ -44,7 +44,7 @@ public class Uniq implements Application {
         }
 
         for (int i = 0; i < lines.size(); i++) {
-            if(i < lines.size() - 1 && (invariant ? lines.get(i).equalsIgnoreCase(lines.get(i + 1)) : lines.get(i).equals(lines.get(i + 1)))) {
+            if(i != 0 && (invariant ? lines.get(i).equalsIgnoreCase(lines.get(i - 1)) : lines.get(i).equals(lines.get(i - 1)))) {
                 continue;
             }
 
