@@ -1,9 +1,6 @@
 package uk.ac.ucl.shell.applications;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -15,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.ucl.shell.Shell;
+import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
+import uk.ac.ucl.shell.exceptions.NotExistingDirectoryException;
+import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 public class Find extends SimpleFileVisitor<Path> implements Application {
     List<Path> matches = new ArrayList<Path>();
@@ -23,18 +23,19 @@ public class Find extends SimpleFileVisitor<Path> implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if (args.isEmpty()) {
-            throw new RuntimeException("find: missing argument");
+            throw new MissingArgumentsException("find");
         } else if (args.size() > 3) {
-            throw new RuntimeException("find: incorrect number of arguments");
+            throw new TooManyArgumentsException("find");
         } else if(!args.get(0).equals("-name") && !args.get(1).equals("-name")){
-            throw new RuntimeException("find: missing -name flag");
+//            throw new MissingArgumentsException("find: missing -name flag");
+            throw new MissingArgumentsException("find");
         }
         
         var startDir = args.size() == 2 ? Shell.getCurrentDirectory().toFile() : Shell.getCurrentDirectory().resolve(args.get(0)).toFile();
         var filenamePattern = args.get(args.size() - 1);
 
         if (!startDir.exists() || !startDir.isDirectory()) {
-            throw new RuntimeException("find: " + startDir.getName() + " is not an existing directory");
+            throw new NotExistingDirectoryException("find", startDir.getName());
         }
 
         matcher = FileSystems.getDefault().getPathMatcher("glob:" + filenamePattern);

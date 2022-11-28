@@ -1,13 +1,12 @@
 package uk.ac.ucl.shell.applications;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.List;
 import java.util.Scanner;
 
 import uk.ac.ucl.shell.Shell;
+import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
+import uk.ac.ucl.shell.exceptions.FileNotFoundException;
 
 public class Cat implements Application {
     @Override
@@ -31,10 +30,10 @@ public class Cat implements Application {
                             output.flush();
                         }
                     } catch (IOException e) {
-                        throw new RuntimeException("cat: cannot open " + file.getPath());
+                        throw new CannotOpenFileException("cat", file.getPath());
                     }
                 } else {
-                    throw new RuntimeException("cat: file does not exist " + file.getPath());
+                    throw new FileNotFoundException("cat", file.getPath());
                 }
             }
         }
