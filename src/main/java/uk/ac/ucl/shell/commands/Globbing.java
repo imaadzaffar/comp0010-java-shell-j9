@@ -18,12 +18,12 @@ public class Globbing extends SimpleFileVisitor<Path> {
     PathMatcher fileMatcher;
     PathMatcher dirMatcher;
 
-    public ArrayList<String> glob(ArrayList<String> args) throws IOException {
+    public ArrayList<String> glob(ArrayList<String> args, boolean substituted) throws IOException {
         ArrayList<String> globbedArgs = new ArrayList<>();
 
         for(String arg : args) {
             if(!arg.contains("*") || (globbedArgs.size() > 0 && globbedArgs.get(globbedArgs.size() - 1).startsWith("-"))) {
-                if (arg.contains("'") && !arg.startsWith("\"")) {
+                if (arg.contains("'") && !arg.startsWith("\"") && !substituted) {
                     globbedArgs.add(arg.replace("'", ""));
                 } else {
                     globbedArgs.add(arg.replace("\"", ""));

@@ -85,9 +85,7 @@ public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>
         var output = new OutputStreamWriter(stream);
 
         try {
-            if(!substituted) {
-                args = new Globbing().glob(args);
-            }
+            args = new Globbing().glob(args, substituted);
             app.exec(args, input, output);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
