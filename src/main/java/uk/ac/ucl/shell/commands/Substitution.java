@@ -44,12 +44,8 @@ public class Substitution {
 
             // Append result to arg
             tempArgument.append(stream.toString());
-//
-//            System.out.println("\"" + stream.toString().replace("\n","") + "\"");
 
-            if (endIndex != argument.length() - 1) {
-                tempArgument.append(argument.substring(endIndex + 1, argument.length() - 1));
-            }
+            tempArgument.append(argument.substring(endIndex + 1));
 
             res.add(tempArgument.toString());
             tempArgument.setLength(0);

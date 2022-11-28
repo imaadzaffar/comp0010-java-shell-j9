@@ -23,11 +23,15 @@ public class Globbing extends SimpleFileVisitor<Path> {
 
         for(String arg : args) {
             if(!arg.contains("*") || (globbedArgs.size() > 0 && globbedArgs.get(globbedArgs.size() - 1).startsWith("-"))) {
-                globbedArgs.add(arg.startsWith("\"") || arg.startsWith("'") ? arg.substring(1, arg.length() - 1) : arg);
+                if (arg.contains("'") && !arg.startsWith("\"")) {
+                    globbedArgs.add(arg.replace("'", ""));
+                } else {
+                    globbedArgs.add(arg.replace("\"", ""));
+                }
                 continue;
             }
 
-            matches = new ArrayList<String>();
+            matches = new ArrayList<>();
 
             fileMatcher = FileSystems.getDefault().getPathMatcher("glob:" + arg);
             dirMatcher = arg.contains("/") ? FileSystems.getDefault().getPathMatcher("glob:" + arg.substring(0, arg.lastIndexOf("/"))) : null;
@@ -41,7 +45,7 @@ public class Globbing extends SimpleFileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attr) throws IOException {
+    public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attr) {
         Path name = Shell.getCurrentDirectory().relativize(directory);
 
         if (fileMatcher.matches(name)) {
@@ -52,7 +56,7 @@ public class Globbing extends SimpleFileVisitor<Path> {
     }
 
     @Override
-    public FileVisitResult visitFile(Path file, BasicFileAttributes attr) throws IOException {
+    public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
         Path name = Shell.getCurrentDirectory().relativize(file);
         Path directory = Shell.getCurrentDirectory().relativize(file).getParent();
 
