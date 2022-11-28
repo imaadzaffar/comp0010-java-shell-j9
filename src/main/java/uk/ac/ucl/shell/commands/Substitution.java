@@ -43,11 +43,11 @@ public class Substitution {
             ByteArrayOutputStream stream = visitor.visit(tree);
 
             // Append result to arg
-            tempArgument.append(stream.toString());
+            tempArgument.append(stream.toString().replace(System.getProperty("line.separator"), " ").trim());
 
             tempArgument.append(argument.substring(endIndex + 1));
 
-            res.add(tempArgument.toString().trim().replace(System.getProperty("line.separator"), " "));
+            res.add(tempArgument.toString());
             tempArgument.setLength(0);
         }
 
