@@ -23,7 +23,7 @@ public class Globbing extends SimpleFileVisitor<Path> {
 
         for(String arg : args) {
             if(!arg.contains("*") || (globbedArgs.size() > 0 && globbedArgs.get(globbedArgs.size() - 1).startsWith("-"))) {
-                globbedArgs.add(arg.replace("\"", "").replace("'", ""));
+                globbedArgs.add(arg.startsWith("\"") || arg.startsWith("'") ? arg.substring(1, arg.length() - 1) : arg);
                 continue;
             }
 
