@@ -21,8 +21,8 @@ quoted : SINGLEQUOTED | DOUBLEQUOTED | BACKQUOTED;
  * Lexer Rules
  */
 
-DOUBLEQUOTED : '"' (~["`\n]* BACKQUOTED? ~["`\n]*) '"';
-SINGLEQUOTED : '\'' ~['\n]* '\'';
-BACKQUOTED :'`' ~[`\n]* '`';
+DOUBLEQUOTED : UNQUOTED* '"' (~["`\n]* BACKQUOTED? ~["`\n]*) '"' UNQUOTED*;
+SINGLEQUOTED : UNQUOTED* '\'' ~['\n]* '\'' UNQUOTED*;
+BACKQUOTED : UNQUOTED* '`' ~[`\n]* '`' UNQUOTED*;
 UNQUOTED : ~[ \t\n'`";><|]+;
 WS : (' ' | '\t') -> channel(HIDDEN);
