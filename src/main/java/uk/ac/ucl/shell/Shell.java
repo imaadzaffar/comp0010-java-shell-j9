@@ -54,7 +54,7 @@ public class Shell {
             try {
                 eval(args[1], System.out);
             } catch (Exception e) {
-                System.out.println("COMP0010 shell: " + e.getMessage());
+                System.err.println("COMP0010 shell: " + e.getMessage());
             }
         } else {
             try (Scanner input = new Scanner(System.in)) {
@@ -68,7 +68,7 @@ public class Shell {
                         input.close();
                         break;
                     } catch (Exception e) {
-                        System.out.println("COMP0010 shell: " + e.getMessage());
+                        System.err.println("COMP0010 shell: " + e.getMessage());
                     }
                 }
             }
