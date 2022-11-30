@@ -1,6 +1,5 @@
 package uk.ac.ucl.shell;
 
-import java.io.File;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,11 +8,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import uk.ac.ShellVisitor;
 
 public class Shell {
     private static Path currentDirectory = Paths.get(System.getProperty("user.dir"));
@@ -29,8 +28,18 @@ public class Shell {
     public static void eval(String cmdline, OutputStream output) throws IOException {
         CharStream parserInput = CharStreams.fromString(cmdline);
         ShellGrammarLexer lexer = new ShellGrammarLexer(parserInput);
+
+        // removes default ConsoleErrorListener
+        lexer.removeErrorListeners();
+        // adds a custom error listener
+        lexer.addErrorListener(new ShellErrorListener());
+
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);        
         ShellGrammarParser parser = new ShellGrammarParser(tokenStream);
+
+        parser.removeErrorListeners();
+        parser.addErrorListener(new ShellErrorListener());
+
         ParseTree tree = parser.shell();
         ShellVisitor visitor = new ShellVisitor();
         ByteArrayOutputStream stream = visitor.visit(tree);

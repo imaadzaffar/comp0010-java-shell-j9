@@ -4,12 +4,12 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import uk.ac.ShellVisitor;
+import uk.ac.ucl.shell.ShellVisitor;
+import uk.ac.ucl.shell.ShellErrorListener;
 import uk.ac.ucl.shell.ShellGrammarLexer;
 import uk.ac.ucl.shell.ShellGrammarParser;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Substitution {
@@ -36,8 +36,20 @@ public class Substitution {
             // Create parse tree
             CharStream parserInput = CharStreams.fromString(evalString);
             ShellGrammarLexer lexer = new ShellGrammarLexer(parserInput);
+
+            // removes default ConsoleErrorListener
+            lexer.removeErrorListeners();
+            // adds a custom error listener
+            lexer.addErrorListener(new ShellErrorListener());
+
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             ShellGrammarParser parser = new ShellGrammarParser(tokenStream);
+
+            // removes default ConsoleErrorListener
+            parser.removeErrorListeners();
+            // adds a custom error listener
+            parser.addErrorListener(new ShellErrorListener());
+
             ParseTree tree = parser.shell();
             ShellVisitor visitor = new ShellVisitor();
             ByteArrayOutputStream stream = visitor.visit(tree);
