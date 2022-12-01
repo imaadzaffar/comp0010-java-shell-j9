@@ -1,26 +1,39 @@
 package uk.ac.ucl.shell;
 
 import org.junit.Test;
+import uk.ac.ucl.shell.applications.Pwd;
+import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.Scanner;
+import java.io.*;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 
 public class PwdTest {
-    public PwdTest() {}
+    Pwd pwd;
+    InputStream in;
+    ByteArrayOutputStream stream;
+    OutputStreamWriter output;
+
+    public PwdTest() {
+        pwd = new Pwd();
+        in = new PipedInputStream();
+        stream = new ByteArrayOutputStream();
+        output = new OutputStreamWriter(stream);
+    }
 
     @Test
-    public void testPwd() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("pwd", out);
-        try (Scanner scn = new Scanner(in)) {
-            assertEquals(Shell.getCurrentDirectory().toString(), scn.nextLine());
-        }
+    public void testNormal() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        pwd.exec(args, in, output);
+        String appOutput = stream.toString().trim();
+        assertEquals(Shell.getCurrentDirectory().toString(), appOutput);
+    }
 
+    @Test(expected = TooManyArgumentsException.class)
+    public void testTooManyArguments() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        args.add("foo");
+        pwd.exec(args, in, output);
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import uk.ac.ucl.shell.Shell;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
+import uk.ac.ucl.shell.exceptions.NotExistingDirectoryException;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 public class Ls implements Application {
@@ -21,7 +22,7 @@ public class Ls implements Application {
         }
         
         if(!currDir.exists()) {
-            throw new FileNotFoundException("ls", currDir.getPath());
+            throw new NotExistingDirectoryException("ls", currDir.getPath());
         }
 
         File[] listOfFiles = currDir.listFiles();

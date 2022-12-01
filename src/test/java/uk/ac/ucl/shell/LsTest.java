@@ -1,62 +1,105 @@
 package uk.ac.ucl.shell;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ucl.shell.applications.Cd;
+import uk.ac.ucl.shell.applications.Ls;
+import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.NotExistingDirectoryException;
+import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Scanner;
 
 public class LsTest {
-    public LsTest() {}
+    Ls ls;
+    InputStream in;
+    ByteArrayOutputStream stream;
+    OutputStreamWriter output;
+
+    Path testDirLs;
+    Path testDirEmpty;
+    Path testFile1;
+    Path testFile2;
+
+    public LsTest() {
+        ls = new Ls();
+        in = new PipedInputStream();
+        stream = new ByteArrayOutputStream();
+        output = new OutputStreamWriter(stream);
+    }
+
+    @Before
+    public void createTestFiles() throws IOException {
+        String dirName = "test_dir_ls";
+        String dirEmptyName = "test_dir_empty";
+        testDirEmpty = Paths.get(System.getProperty("user.dir"), dirEmptyName);
+        testDirLs = Paths.get(System.getProperty("user.dir"), dirName);
+        testFile1 = Paths.get(System.getProperty("user.dir"), dirName, "test1.txt");
+        testFile2 = Paths.get(System.getProperty("user.dir"), dirName, "test2.txt");
+        Files.createDirectories(testDirLs);
+        Files.createDirectories(testDirEmpty);
+        Files.createFile(testFile1);
+        Files.createFile(testFile2);
+    }
 
     @Test
     public void testNoArgs() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("ls", out);
-        HashSet<String> expecteds = new HashSet<>(Arrays.asList("tools", "system_test", "Dockerfile", "target", "apps.svg", "pom.xml", "README.md", "sh", "test_files", "action.yml", "src"));
-        Scanner scn = new Scanner(in);
-        scn.useDelimiter("\t");
-        for (int i = 0; i < expecteds.size(); i++) {
-            assertTrue(expecteds.contains(scn.next()));
-        }
-        scn.close();
+        Shell.setCurrentDirectory(testDirLs.toString());
+        ArrayList<String> args = new ArrayList<>();
+
+        ls.exec(args, in, output);
+        String appOutput = stream.toString().trim();
+
+        String[] expecteds = {testFile1.getFileName().toString(), testFile2.getFileName().toString()};
+        String[] actuals = appOutput.split("[\n\t]");
+        Arrays.sort(expecteds);
+        Arrays.sort(actuals);
+
+        assertArrayEquals(expecteds, actuals);
     }
 
     @Test
-    public void testWithStartingPath() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("ls test_files", out);
-        HashSet<String> expecteds = new HashSet<>(Arrays.asList("test1.txt", "test2.txt", "test3.txt", "test4.txt"));
-        Scanner scn = new Scanner(in);
-        scn.useDelimiter("\t");
-        for (int i = 0; i < expecteds.size(); i++) {
-            assertTrue(expecteds.contains(scn.next()));
-        }
-        scn.close();
+    public void testStartingPath() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        args.add(testDirLs.toString());
+        ls.exec(args, in, output);
+        String appOutput = stream.toString().trim();
+        String[] expecteds = {testFile1.getFileName().toString(), testFile2.getFileName().toString()};
+        String[] actuals = appOutput.split("[\n\t]");
+        Arrays.sort(expecteds);
+        Arrays.sort(actuals);
+
+        assertArrayEquals(expecteds, actuals);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testWithNonExistentStartingPath() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("ls hello", out);
+    @Test(expected = NotExistingDirectoryException.class)
+    public void testNotExistingStartingPath() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        args.add("foo");
+        ls.exec(args, in, output);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = TooManyArgumentsException.class)
     public void testTooManyArguments() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("ls one two", out);
+        ArrayList<String> args = new ArrayList<>();
+        args.add("one");
+        args.add("two");
+        ls.exec(args, in, output);
+    }
+
+    @After
+    public void deleteTestFiles() throws IOException {
+        Files.delete(testFile1);
+        Files.delete(testFile2);
+        Files.delete(testDirLs);
+        Files.delete(testDirEmpty);
     }
 }

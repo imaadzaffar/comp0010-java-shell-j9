@@ -1,58 +1,50 @@
 package uk.ac.ucl.shell;
 
 import org.junit.Test;
+import uk.ac.ucl.shell.applications.Echo;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.Scanner;
+import java.io.*;
+import java.util.ArrayList;
 
 public class EchoTest {
-    public EchoTest() {}
+    Echo echo;
+    InputStream in;
+    ByteArrayOutputStream stream;
+    OutputStreamWriter output;
+
+    public EchoTest() {
+        echo = new Echo();
+        in = new PipedInputStream();
+        stream = new ByteArrayOutputStream();
+        output = new OutputStreamWriter(stream);
+    }
 
     @Test
     public void testEmpty() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("echo", out);
-        try (Scanner scn = new Scanner(in)) {
-            assertEquals("", scn.nextLine());
-        }
+        ArrayList<String> args = new ArrayList<>();
+        echo.exec(args, in, output);
+        String appOutput = stream.toString().trim();
+        assertEquals("", appOutput);
     }
 
     @Test
-    public void testNormal() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("echo foo", out);
-        try (Scanner scn = new Scanner(in)) {
-            assertEquals("foo", scn.nextLine());
-        }
-    }
-
-    @Test
-    public void testQuoted() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("echo \"foo\"", out);
-        try (Scanner scn = new Scanner(in)) {
-            assertEquals("foo", scn.nextLine());
-        }
+    public void testOneArg() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        args.add("foo");
+        echo.exec(args, in, output);
+        String appOutput = stream.toString().trim();
+        assertEquals("foo", appOutput);
     }
 
     @Test
     public void testMultipleArgs() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("echo Hello World", out);
-        try (Scanner scn = new Scanner(in)) {
-            assertEquals("Hello World", scn.nextLine());
-        }
+        ArrayList<String> args = new ArrayList<>();
+        args.add("Hello");
+        args.add("World");
+        echo.exec(args, in, output);
+        String appOutput = stream.toString().trim();
+        assertEquals("Hello World", appOutput);
     }
 }

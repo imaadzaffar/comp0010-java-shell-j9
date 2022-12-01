@@ -24,6 +24,11 @@ public class ApplicationFactory {
             case "sort" -> new Sort();
             case "uniq" -> new Uniq();
             case "cut" -> new Cut();
+            case "rm" -> new Rm();
+            case "mkdir" -> new Mkdir();
+            case "touch" -> new Touch();
+            case "sleep" -> new Sleep();
+            case "date" -> new Date();
             default -> throw new UnknownApplicationException(appName);
         };
 
