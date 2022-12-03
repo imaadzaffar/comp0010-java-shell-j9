@@ -9,7 +9,6 @@ import uk.ac.ucl.shell.Shell;
 import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
 import uk.ac.ucl.shell.exceptions.InvalidArgumentsException;
-import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 public class Head implements Application {

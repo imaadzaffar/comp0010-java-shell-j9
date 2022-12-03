@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.ByteArrayOutputStream;
-import java.util.*;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -18,7 +16,6 @@ import java.lang.String;
 import uk.ac.ucl.shell.Shell;
 import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
-import uk.ac.ucl.shell.exceptions.InvalidArgumentsException;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 
 public class Cut implements Application {
