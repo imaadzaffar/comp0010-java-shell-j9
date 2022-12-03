@@ -1,5 +1,6 @@
 package uk.ac.ucl.shell.applications;
 
+import uk.ac.ucl.shell.Shell;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
@@ -21,7 +22,7 @@ public class Rm implements Application {
         }
 
         String fileName = args.get(0);
-        Path filePath = Paths.get(System.getProperty("user.dir"), fileName);
+        Path filePath = Shell.getCurrentDirectory().resolve(fileName);
         Files.delete(filePath);
     }
 }

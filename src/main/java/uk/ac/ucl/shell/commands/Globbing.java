@@ -1,7 +1,6 @@
 package uk.ac.ucl.shell.commands;
 
 import uk.ac.ucl.shell.Shell;
-
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -22,6 +21,8 @@ public class Globbing extends SimpleFileVisitor<Path> {
         ArrayList<String> globbedArgs = new ArrayList<>();
 
         for(String arg : args) {
+            // The spec doesn't specify how we should handle globbing for applications that support wildcards already (ie: Find)
+            // To prevent issues we disable globbing if the value is linked to a flag       
             if(!arg.contains("*") || (globbedArgs.size() > 0 && globbedArgs.get(globbedArgs.size() - 1).startsWith("-"))) {
                 if (arg.contains("'") && !arg.startsWith("\"") && !substituted) {
                     globbedArgs.add(arg.replace("'", ""));

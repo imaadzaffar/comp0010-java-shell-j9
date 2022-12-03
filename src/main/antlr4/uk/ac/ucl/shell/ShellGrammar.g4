@@ -1,5 +1,4 @@
 grammar ShellGrammar;
-options { contextSuperClass=ShellRuleContext; }
 
 /*
  * Parser Rules

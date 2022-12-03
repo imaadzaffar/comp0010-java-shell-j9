@@ -8,7 +8,6 @@ import java.util.List;
 
 import uk.ac.ucl.shell.Shell;
 import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
-import uk.ac.ucl.shell.exceptions.InvalidArgumentsException;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 public class Sort implements Application {

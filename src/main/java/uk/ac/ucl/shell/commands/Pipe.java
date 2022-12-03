@@ -1,11 +1,30 @@
 package uk.ac.ucl.shell.commands;
 
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
-public class Pipe implements Command {
+import org.antlr.v4.runtime.tree.ParseTree;
+
+import uk.ac.ucl.shell.ShellVisitor;
+import uk.ac.ucl.shell.ShellGrammarParser.PipeContext;
+import uk.ac.ucl.shell.ShellGrammarParser.SequenceContext;
+
+public class Pipe implements Command<PipeContext> {
+
     @Override
-    public void eval(InputStream input, OutputStreamWriter output) {
+    public ByteArrayOutputStream execute(PipeContext context, ShellVisitor visitor) {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
 
+        for (ParseTree child : context.children) {
+            // skips over pipe characters
+            if (child.getText().startsWith("|")) {
+                continue;
+            }
+
+            output = child.accept(visitor);
+            visitor.setPipedInput(new ByteArrayInputStream(output.toByteArray()));
+        }
+
+        return output;
     }
 }

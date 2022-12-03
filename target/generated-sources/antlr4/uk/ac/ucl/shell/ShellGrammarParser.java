@@ -1,4 +1,4 @@
-// Generated from uk/ac/ucl/shell/ShellGrammar.g4 by ANTLR 4.7
+// Generated from uk\ac\u005Cucl\shell\ShellGrammar.g4 by ANTLR 4.7
 package uk.ac.ucl.shell;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -83,7 +83,7 @@ public class ShellGrammarParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
-	public static class ShellContext extends ShellRuleContext {
+	public static class ShellContext extends ParserRuleContext {
 		public SequenceContext sequence() {
 			return getRuleContext(SequenceContext.class,0);
 		}
@@ -128,7 +128,7 @@ public class ShellGrammarParser extends Parser {
 		return _localctx;
 	}
 
-	public static class SequenceContext extends ShellRuleContext {
+	public static class SequenceContext extends ParserRuleContext {
 		public List<CommandContext> command() {
 			return getRuleContexts(CommandContext.class);
 		}
@@ -184,7 +184,7 @@ public class ShellGrammarParser extends Parser {
 		return _localctx;
 	}
 
-	public static class CommandContext extends ShellRuleContext {
+	public static class CommandContext extends ParserRuleContext {
 		public PipeContext pipe() {
 			return getRuleContext(PipeContext.class,0);
 		}
@@ -236,7 +236,7 @@ public class ShellGrammarParser extends Parser {
 		return _localctx;
 	}
 
-	public static class PipeContext extends ShellRuleContext {
+	public static class PipeContext extends ParserRuleContext {
 		public List<CallContext> call() {
 			return getRuleContexts(CallContext.class);
 		}
@@ -292,7 +292,7 @@ public class ShellGrammarParser extends Parser {
 		return _localctx;
 	}
 
-	public static class CallContext extends ShellRuleContext {
+	public static class CallContext extends ParserRuleContext {
 		public ArgumentContext argument() {
 			return getRuleContext(ArgumentContext.class,0);
 		}
@@ -432,7 +432,7 @@ public class ShellGrammarParser extends Parser {
 		return _localctx;
 	}
 
-	public static class AtomContext extends ShellRuleContext {
+	public static class AtomContext extends ParserRuleContext {
 		public RedirectionContext redirection() {
 			return getRuleContext(RedirectionContext.class,0);
 		}
@@ -490,7 +490,7 @@ public class ShellGrammarParser extends Parser {
 		return _localctx;
 	}
 
-	public static class ArgumentContext extends ShellRuleContext {
+	public static class ArgumentContext extends ParserRuleContext {
 		public List<QuotedContext> quoted() {
 			return getRuleContexts(QuotedContext.class);
 		}
@@ -568,7 +568,7 @@ public class ShellGrammarParser extends Parser {
 		return _localctx;
 	}
 
-	public static class RedirectionContext extends ShellRuleContext {
+	public static class RedirectionContext extends ParserRuleContext {
 		public ArgumentContext argument() {
 			return getRuleContext(ArgumentContext.class,0);
 		}
@@ -656,7 +656,7 @@ public class ShellGrammarParser extends Parser {
 		return _localctx;
 	}
 
-	public static class QuotedContext extends ShellRuleContext {
+	public static class QuotedContext extends ParserRuleContext {
 		public TerminalNode SINGLEQUOTED() { return getToken(ShellGrammarParser.SINGLEQUOTED, 0); }
 		public TerminalNode DOUBLEQUOTED() { return getToken(ShellGrammarParser.DOUBLEQUOTED, 0); }
 		public TerminalNode BACKQUOTED() { return getToken(ShellGrammarParser.BACKQUOTED, 0); }
