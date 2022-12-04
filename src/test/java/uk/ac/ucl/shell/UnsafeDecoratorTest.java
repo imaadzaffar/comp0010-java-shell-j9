@@ -2,35 +2,50 @@ package uk.ac.ucl.shell;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.Scanner;
+import java.io.*;
+import java.util.ArrayList;
 
 import org.junit.Test;
+import uk.ac.ucl.shell.applications.Cd;
+import uk.ac.ucl.shell.applications.Echo;
+import uk.ac.ucl.shell.applications.UnsafeDecorator;
 
 public class UnsafeDecoratorTest {
-    public UnsafeDecoratorTest() {}
+    UnsafeDecorator unsafeDecorator;
+    InputStream in;
+    ByteArrayOutputStream stream;
+    OutputStreamWriter output;
+
+    public UnsafeDecoratorTest() {
+        in = new PipedInputStream();
+        stream = new ByteArrayOutputStream();
+        output = new OutputStreamWriter(stream);
+    }
 
     @Test
     public void testNoErrorsThrown() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("_echo hello", out);
-        try (Scanner scn = new Scanner(in)) {
-            assertEquals("hello", scn.nextLine());
-        }
+        ArrayList<String> args = new ArrayList<>();
+        unsafeDecorator = new UnsafeDecorator(new Echo());
+        args.add("hello");
+
+        unsafeDecorator.exec(args, in, output);
+
+        String expected = "hello";
+        String appOutput = stream.toString().trim();
+
+        assertEquals(expected, appOutput);
     }
 
     @Test
     public void testErrorsThrown() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("_cd hello", out);
-        try (Scanner scn = new Scanner(in)) {
-            assertEquals("cd: hello is not an existing directory", scn.nextLine());
-        }
+        ArrayList<String> args = new ArrayList<>();
+        unsafeDecorator = new UnsafeDecorator(new Cd());
+
+        unsafeDecorator.exec(args, in, output);
+
+        String expected = "cd: missing arguments";
+        String appOutput = stream.toString().trim();
+
+        assertEquals(expected, appOutput);
     }
 }

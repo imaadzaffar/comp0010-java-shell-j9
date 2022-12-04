@@ -2,83 +2,128 @@ package uk.ac.ucl.shell;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.Scanner;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ucl.shell.applications.Cat;
+import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
+import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 
 public class CatTest {
-    public CatTest() {}
+    Cat cat;
+    InputStream in;
+    ByteArrayOutputStream stream;
+    OutputStreamWriter output;
 
-    // TODO: Standard input
-    // @Test
-    // public void testNoArgs() throws IOException {
-    //     PipedInputStream in = new PipedInputStream();
-    //     PipedOutputStream out;
-    //     out = new PipedOutputStream(in);
-    //     Shell.eval("cat", out);
-    // }
+    Path testDirCat;
+    Path testFile1;
+    Path testFile2;
 
-    @Test(expected = RuntimeException.class)
-    public void testNonExistentFile() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("cat hello.txt", out);
+    public CatTest() {
+        cat = new Cat();
+        in = new PipedInputStream();
+        stream = new ByteArrayOutputStream();
+        output = new OutputStreamWriter(stream);
     }
 
-    // TODO: Cannot open file
-    // @Test(expected = RuntimeException.class)
-    // public void testFileError() throws IOException {
-    //     PipedInputStream in = new PipedInputStream();
-    //     PipedOutputStream out;
-    //     out = new PipedOutputStream(in);
-    //     Shell.eval("cat hello.txt", out);
-    // }
+    @Before
+    public void createTestFiles() throws IOException {
+        String dirName = "testDir";
 
-    @Test
-    public void testFileError() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
+        testDirCat = Shell.getCurrentDirectory().resolve(dirName);
+        testFile1 = testDirCat.resolve("test1.txt");
+        testFile2 = testDirCat.resolve("test2.txt");
+
+        List<String> lines = List.of("Saudi Arabia");
+        List<String> lines2 = List.of("Argentina");
+
+        Files.createDirectories(testDirCat);
+        Files.createFile(testFile1);
+        Files.createFile(testFile2);
+
         try {
-            Shell.eval("cat src", out);
-        } catch (RuntimeException e) {
-            assertEquals(e.toString(), "java.lang.RuntimeException: cat: cannot open " + Shell.getCurrentDirectory().toString() + "/src");
+            Files.write(testFile1, lines, StandardCharsets.UTF_8);
+            Files.write(testFile2, lines2, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    @Test(expected = MissingArgumentsException.class)
+    public void testNoArgs() throws IOException {
+        List<String> args = new ArrayList<>();
+
+        cat.exec(args, null, output);
     }
 
     @Test
     public void testSingleArg() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("cd test_files", out);
-        Shell.eval("cat test1.txt", out);
-        String[] expecteds = {"one", "two", "three"};
-        try (Scanner scn = new Scanner(in)) {
-            for (String expected : expecteds) {
-                assertEquals(expected, scn.nextLine());
-            }
-        }
-        Shell.eval("cd ..", out);
+        List<String> args = new ArrayList<>();
+        args.add(testFile1.toString());
+
+        cat.exec(args, in, output);
+
+        String expected = "Saudi Arabia";
+        String appOutput = stream.toString().trim();
+
+        assertEquals(expected, appOutput);
     }
 
     @Test
-    public void testMultipleArg() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("cd test_files", out);
-        Shell.eval("cat test1.txt test2.txt test3.txt", out);
-        String[] expecteds = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
-        try (Scanner scn = new Scanner(in)) {
-            for (String expected : expecteds) {
-                assertEquals(expected, scn.nextLine());
-            }
-        }
-        Shell.eval("cd ..", out);
+    public void testDoubleArg() throws IOException {
+        List<String> args = new ArrayList<>();
+        args.add(testFile1.toString());
+        args.add(testFile2.toString());
+
+        cat.exec(args, in, output);
+
+        String expected = "Saudi Arabia\nArgentina";
+        String appOutput = stream.toString().trim();
+
+        assertEquals(expected, appOutput);
+    }
+
+    @Test
+    public void testStandardInput() throws IOException {
+        List<String> args = new ArrayList<>();
+        in = new ByteArrayInputStream("World Cup".getBytes(StandardCharsets.UTF_8));
+
+        cat.exec(args, in, output);
+
+        String expected = "World Cup";
+        String appOutput = stream.toString().trim();
+
+        assertEquals(expected, appOutput);
+    }
+
+    @Test(expected = CannotOpenFileException.class)
+    public void testCannotOpenFile() throws IOException {
+         List<String> args = new ArrayList<>();
+         args.add(testDirCat.toString());
+
+         cat.exec(args, in, output);
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    public void testFileNotFoundException() throws IOException {
+        List<String> args = new ArrayList<>();
+        args.add("test1.txt");
+
+        cat.exec(args, in, output);
+    }
+
+    @After
+    public void deleteTestFiles() throws IOException {
+        Files.delete(testFile1);
+        Files.delete(testFile2);
+        Files.delete(testDirCat);
     }
 }

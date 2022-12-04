@@ -7,6 +7,7 @@ import java.util.Scanner;
 import uk.ac.ucl.shell.Shell;
 import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 
 public class Cat implements Application {
     @Override
@@ -18,6 +19,8 @@ public class Cat implements Application {
                     output.write(System.getProperty("line.separator"));
                     output.flush();
                 }
+            } catch (NullPointerException e) {
+                throw new MissingArgumentsException("cat");
             }
         } else {
             for (String arg : args) {

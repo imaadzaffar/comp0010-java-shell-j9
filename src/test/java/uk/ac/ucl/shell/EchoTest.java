@@ -24,18 +24,26 @@ public class EchoTest {
     @Test
     public void testEmpty() throws IOException {
         ArrayList<String> args = new ArrayList<>();
+
         echo.exec(args, in, output);
+
+        String expected = "";
         String appOutput = stream.toString().trim();
-        assertEquals("", appOutput);
+
+        assertEquals(expected, appOutput);
     }
 
     @Test
     public void testOneArg() throws IOException {
         ArrayList<String> args = new ArrayList<>();
         args.add("foo");
+
         echo.exec(args, in, output);
+
+        String expected = "foo";
         String appOutput = stream.toString().trim();
-        assertEquals("foo", appOutput);
+
+        assertEquals(expected, appOutput);
     }
 
     @Test
@@ -43,8 +51,12 @@ public class EchoTest {
         ArrayList<String> args = new ArrayList<>();
         args.add("Hello");
         args.add("World");
+
         echo.exec(args, in, output);
+
+        String expected = "Hello World";
         String appOutput = stream.toString().trim();
-        assertEquals("Hello World", appOutput);
+
+        assertEquals(expected, appOutput);
     }
 }

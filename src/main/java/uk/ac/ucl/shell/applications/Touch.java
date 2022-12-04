@@ -2,7 +2,6 @@ package uk.ac.ucl.shell.applications;
 
 import uk.ac.ucl.shell.Shell;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
-import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,12 +15,11 @@ public class Touch implements Application {
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if (args.isEmpty()) {
             throw new MissingArgumentsException("touch");
-        } else if (args.size() > 1) {
-            throw new TooManyArgumentsException("touch");
         }
 
-        String fileName = args.get(0);
-        Path filePath = Shell.getCurrentDirectory().resolve(fileName);
-        Files.createFile(filePath);
+        for (String fileName : args) {
+            Path filePath = Shell.getCurrentDirectory().resolve(fileName);
+            Files.createFile(filePath);
+        }
     }
 }

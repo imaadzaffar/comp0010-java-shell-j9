@@ -1,95 +1,156 @@
 package uk.ac.ucl.shell;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ucl.shell.applications.Uniq;
+import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
+import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
+import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class UniqTest {
-    public UniqTest() {}
+    Uniq uniq;
+    InputStream in;
+    ByteArrayOutputStream stream;
+    OutputStreamWriter output;
+
+    Path testDirHead;
+    Path testFile1;
+
+    public UniqTest() {
+        uniq = new Uniq();
+        in = new PipedInputStream();
+        stream = new ByteArrayOutputStream();
+        output = new OutputStreamWriter(stream);
+    }
+
+    @Before
+    public void createTestFiles() throws IOException {
+        String dirName = "testDir";
+
+        testDirHead = Shell.getCurrentDirectory().resolve(dirName);
+        testFile1 = Shell.getCurrentDirectory().resolve(dirName).resolve("test1.txt");
+
+        List<String> lines = List.of("a", "A", "a", "b", "b", "b", "C", "c", "D");
+
+        Files.createDirectories(testDirHead);
+        Files.createFile(testFile1);
+
+        try {
+            Files.write(testFile1, lines, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testStandardInput() throws IOException {
+        List<String> args = new ArrayList<>();
+        in = new ByteArrayInputStream("a\nA\na\na\nb\nb\nc\nd\nD".getBytes(StandardCharsets.UTF_8));
+
+        uniq.exec(args, in, output);
+
+        String expected = "a\nA\na\nb\nc\nd\nD";
+        String appOutput = stream.toString().trim();
+
+        assertEquals(expected, appOutput);
+    }
+
+    @Test
+    public void testStandardInputCaseInsensitive() throws IOException {
+        List<String> args = new ArrayList<>();
+        args.add("-i");
+        in = new ByteArrayInputStream("a\nA\na\na\nb\nb\nc\nd\nD".getBytes(StandardCharsets.UTF_8));
+
+        uniq.exec(args, in, output);
+
+        String expected = "a\nb\nc\nd";
+        String appOutput = stream.toString().trim();
+
+        assertEquals(expected, appOutput);
+    }
 
     @Test
     public void testNormal() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        // save original directory
-        String originalDir = Shell.getCurrentDirectory().toString();
-        // navigate to test files
-        Shell.eval("cd test_files", out);
-        // execute actual test command
-        Shell.eval("uniq test4.txt", out);
-        HashSet<String> expecteds = new HashSet<>(Arrays.asList("A", "a", "b", "c", "d"));
-        Scanner scn = new Scanner(in);
-        scn.useDelimiter("\n");
-        for (int i = 0 ; i < expecteds.size(); i++) {
-            assertTrue(expecteds.contains(scn.nextLine()));
-        }
-        // return to original filepath
-        Shell.eval("cd " + originalDir, out);
+        List<String> args = new ArrayList<>();
+        args.add(testFile1.toString());
+
+        uniq.exec(args, in, output);
+
+        String expected = "a\nA\na\nb\nC\nc\nD";
+        String appOutput = stream.toString().trim();
+
+        assertEquals(expected, appOutput);
     }
 
     @Test
-    public void testNormalInsensitive() throws IOException{
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        // save original directory
-        String originalDir = Shell.getCurrentDirectory().toString();
-        // navigate to test files
-        Shell.eval("cd test_files", out);
-        // execute actual test command
-        Shell.eval("uniq -i test4.txt", out);
-        HashSet<String> expecteds = new HashSet<>(Arrays.asList("a", "b", "c", "d"));
-        Scanner scn = new Scanner(in);
-        scn.useDelimiter("\n");
-        for (int i = 0 ; i < expecteds.size(); i++) {
-            assertTrue(expecteds.contains(scn.nextLine()));
-        }
-        // return to original filepath
-        Shell.eval("cd " + originalDir, out);
+    public void testNormalCaseInsensitive() throws IOException {
+        List<String> args = new ArrayList<>();
+        args.add("-i");
+        args.add(testFile1.toString());
+
+        uniq.exec(args, in, output);
+
+        String expected = "a\nb\nC\nD";
+        String appOutput = stream.toString().trim();
+
+        assertEquals(expected, appOutput);
     }
 
-    @Test
-    public void testInvalidArguments() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        try {
-            Shell.eval("uniq a b c", out);
-        } catch(RuntimeException e) {
-            assertEquals(e.toString(), "java.lang.RuntimeException: uniq: invalid arguments");
-        }
+    @Test(expected = MissingArgumentsException.class)
+    public void testNoArgs() throws IOException {
+        List<String> args = new ArrayList<>();
+
+        uniq.exec(args, null, output);
     }
 
-    @Test
-    public void testFileDoesntOpen() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        try {
-            Shell.eval("uniq src", out);
-        } catch (RuntimeException e) {
-            assertEquals(e.toString(), "java.lang.RuntimeException: uniq: cannot open " + Shell.getCurrentDirectory().toString() + "/src");
-        }
+    @Test(expected = MissingArgumentsException.class)
+    public void testJustCaseInsensitiveFlag() throws IOException {
+        List<String> args = new ArrayList<>();
+        args.add("-i");
+
+        uniq.exec(args, null, output);
     }
 
-    @Test
-    public void testFileDoesntExist() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        try {
-            Shell.eval("uniq abc", out);
-        } catch (RuntimeException e) {
-            assertEquals(e.toString(), "java.lang.RuntimeException: uniq: file does not exist");
-        }
+    @Test(expected = TooManyArgumentsException.class)
+    public void testTooManyArgs() throws IOException {
+        List<String> args = new ArrayList<>();
+        args.add("One");
+        args.add("Two");
+        args.add("Three");
+
+        uniq.exec(args, in, output);
+    }
+
+    @Test(expected = CannotOpenFileException.class)
+    public void testCannotOpenFile() throws IOException {
+        List<String> args = new ArrayList<>();
+        args.add(testDirHead.toString());
+
+        uniq.exec(args, in, output);
+    }
+
+    @Test(expected = FileNotFoundException.class)
+    public void testFileDoesNotExist() throws IOException {
+        List<String> args = new ArrayList<>();
+        args.add("ThisFileDoesNotExist");
+
+        uniq.exec(args, in, output);
+    }
+
+    @After
+    public void deleteTestFiles() throws IOException {
+        Files.delete(testFile1);
+        Files.delete(testDirHead);
     }
 }

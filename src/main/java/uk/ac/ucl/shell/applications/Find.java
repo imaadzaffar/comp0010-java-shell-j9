@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.ucl.shell.Shell;
+import uk.ac.ucl.shell.exceptions.InvalidArgumentsException;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 import uk.ac.ucl.shell.exceptions.NotExistingDirectoryException;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
@@ -22,17 +23,16 @@ public class Find extends SimpleFileVisitor<Path> implements Application {
 
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
-        if (args.isEmpty()) {
+        if (args.size() < 2) {
             throw new MissingArgumentsException("find");
         } else if (args.size() > 3) {
             throw new TooManyArgumentsException("find");
         } else if(!args.get(0).equals("-name") && !args.get(1).equals("-name")){
-//            throw new MissingArgumentsException("find: missing -name flag");
-            throw new MissingArgumentsException("find");
+            throw new InvalidArgumentsException("find");
         }
         
-        var startDir = args.size() == 2 ? Shell.getCurrentDirectory().toFile() : Shell.getCurrentDirectory().resolve(args.get(0)).toFile();
-        var filenamePattern = args.get(args.size() - 1);
+        File startDir = args.size() == 2 ? Shell.getCurrentDirectory().toFile() : Shell.getCurrentDirectory().resolve(args.get(0)).toFile();
+        String filenamePattern = args.get(args.size() - 1);
 
         if (!startDir.exists() || !startDir.isDirectory()) {
             throw new NotExistingDirectoryException("find", startDir.getName());

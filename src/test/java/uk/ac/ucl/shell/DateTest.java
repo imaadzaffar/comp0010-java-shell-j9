@@ -1,22 +1,22 @@
 package uk.ac.ucl.shell;
 
+import static org.junit.Assert.*;
+
 import org.junit.Test;
-import uk.ac.ucl.shell.applications.Pwd;
+import uk.ac.ucl.shell.applications.Date;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import java.io.*;
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-
-public class PwdTest {
-    Pwd pwd;
+public class DateTest {
+    Date date;
     InputStream in;
     ByteArrayOutputStream stream;
     OutputStreamWriter output;
 
-    public PwdTest() {
-        pwd = new Pwd();
+    public DateTest() {
+        date = new Date();
         in = new PipedInputStream();
         stream = new ByteArrayOutputStream();
         output = new OutputStreamWriter(stream);
@@ -26,9 +26,9 @@ public class PwdTest {
     public void testNormal() throws IOException {
         ArrayList<String> args = new ArrayList<>();
 
-        pwd.exec(args, in, output);
+        date.exec(args, in, output);
 
-        String expected = Shell.getCurrentDirectory().toString();
+        String expected = new java.util.Date().toString();
         String appOutput = stream.toString().trim();
 
         assertEquals(expected, appOutput);
@@ -37,8 +37,8 @@ public class PwdTest {
     @Test(expected = TooManyArgumentsException.class)
     public void testTooManyArguments() throws IOException {
         ArrayList<String> args = new ArrayList<>();
-        args.add("foo");
+        args.add("One");
 
-        pwd.exec(args, in, output);
+        date.exec(args, in, output);
     }
 }
