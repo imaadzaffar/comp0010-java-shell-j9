@@ -29,6 +29,7 @@ public class ApplicationFactory {
             case "touch" -> new Touch();
             case "sleep" -> new Sleep();
             case "date" -> new Date();
+            case "wc" -> new Wc();
             default -> throw new UnknownApplicationException(appName);
         };
 
