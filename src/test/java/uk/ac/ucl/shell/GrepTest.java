@@ -64,10 +64,12 @@ public class GrepTest {
         // execute actual test command
         Shell.eval("grep e test1.txt", out);
         HashSet<String> expecteds = new HashSet<>(Arrays.asList("one", "three"));
-        Scanner scn = new Scanner(in);
-        scn.useDelimiter("\n");
-        for (int i = 0 ; i < expecteds.size(); i++) {
-            assertTrue(expecteds.contains(scn.nextLine()));
+        
+        try(Scanner scn = new Scanner(in)){
+            scn.useDelimiter("\n");
+            for (int i = 0 ; i < expecteds.size(); i++) {
+                assertTrue(expecteds.contains(scn.nextLine()));
+            }
         }
         // return to original filepath
         Shell.eval("cd " + originalDir, out);

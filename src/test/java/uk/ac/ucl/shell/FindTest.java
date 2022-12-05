@@ -60,8 +60,9 @@ public class FindTest {
         PipedOutputStream out;
         out = new PipedOutputStream(in);
         Shell.eval("find -name sh", out);
-        Scanner scn = new Scanner(in);
-        assertEquals("./sh", scn.nextLine());
+        try(Scanner scn = new Scanner(in)) {
+            assertEquals("./sh", scn.nextLine());
+        }
     }
 
     @Test
