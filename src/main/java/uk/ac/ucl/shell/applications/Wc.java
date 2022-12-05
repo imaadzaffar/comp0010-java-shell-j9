@@ -37,7 +37,7 @@ public class Wc implements Application {
                 num_of_bytes += line.length();
             }
 
-            output.write(num_of_lines + " " + num_of_words + " " + num_of_bytes + " " + fileName);
+            output.write(num_of_lines + " " + num_of_words + " " + num_of_bytes + " " + filePath.getFileName());
             output.write(System.getProperty("line.separator"));
             output.flush();
         }

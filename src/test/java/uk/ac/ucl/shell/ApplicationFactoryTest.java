@@ -139,6 +139,13 @@ public class ApplicationFactoryTest {
         assertEquals(Date.class, app.getClass());
     }
 
+    @Test
+    public void testWc() {
+        String appName = "wc";
+        Application app = applicationFactory.getApp(appName);
+        assertEquals(Wc.class, app.getClass());
+    }
+
     @Test(expected = UnknownApplicationException.class)
     public void testUnknownApplication() {
         String appName = "Eren";
