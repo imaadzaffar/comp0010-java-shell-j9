@@ -7,7 +7,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import uk.ac.ucl.shell.ShellVisitor;
 import uk.ac.ucl.shell.ShellGrammarParser.PipeContext;
-import uk.ac.ucl.shell.ShellGrammarParser.SequenceContext;
 
 public class Pipe implements Command<PipeContext> {
 
