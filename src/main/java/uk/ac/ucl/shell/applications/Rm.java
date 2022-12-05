@@ -1,6 +1,7 @@
 package uk.ac.ucl.shell.applications;
 
 import uk.ac.ucl.shell.Shell;
+import uk.ac.ucl.shell.exceptions.FileNotFoundException;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
@@ -22,6 +23,10 @@ public class Rm implements Application {
 
         String fileName = args.get(0);
         Path filePath = Shell.getCurrentDirectory().resolve(fileName);
-        Files.delete(filePath);
+        if (Files.exists(filePath)) {
+            Files.delete(filePath);
+        } else {
+            throw new FileNotFoundException("rm", filePath.toString());
+        }
     }
 }

@@ -30,6 +30,8 @@ public class Grep implements Application {
                         output.flush();
                     }
                 }
+            } catch (NullPointerException e) {
+                throw new MissingArgumentsException("grep");
             }
         } else {
             List<String> files = args.subList(1, args.size());

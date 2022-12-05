@@ -1,103 +1,181 @@
 package uk.ac.ucl.shell;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ucl.shell.applications.Find;
+import uk.ac.ucl.shell.exceptions.InvalidArgumentsException;
+import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
+import uk.ac.ucl.shell.exceptions.NotExistingDirectoryException;
+import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Scanner;
 
 public class FindTest {
-    public FindTest() {}
+    Find find;
+    InputStream in;
+    ByteArrayOutputStream stream;
+    OutputStreamWriter output;
+    String originalDir;
 
-    @Test(expected = RuntimeException.class)
-    public void testNoArgs() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("find", out);
+    Path testDir;
+    Path testFile1;
+    Path testFile2;
+
+    public FindTest() {
+        find = new Find();
+        in = new PipedInputStream();
+        stream = new ByteArrayOutputStream();
+        output = new OutputStreamWriter(stream);
+        originalDir = Shell.getCurrentDirectory().toString();
     }
 
-    @Test(expected = RuntimeException.class)
-    public void test1ArgumentNoNameFlag() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("find pattern", out);
+    @Before
+    public void createTestFiles() throws IOException {
+        String dirName = "testDir";
+
+        testDir = Shell.getCurrentDirectory().resolve(dirName);
+        testFile1 = Shell.getCurrentDirectory().resolve(dirName).resolve("test1.txt");
+        testFile2 = Shell.getCurrentDirectory().resolve(dirName).resolve("test2.txt");
+
+        Files.createDirectories(testDir);
+        Files.createFile(testFile1);
+        Files.createFile(testFile2);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void test2ArgumentsNoNameFlag() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("find path pattern", out);
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void testTooManyArguments() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("find one two three four", out);
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void testNonExistentDirectory() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("find hello -name sh", out);
-    }
 
     @Test
     public void testPattern() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("find -name sh", out);
-        try(Scanner scn = new Scanner(in)) {
-            assertEquals("./sh", scn.nextLine());
-        }
+        Shell.setCurrentDirectory(testDir.toString());
+        ArrayList<String> args = new ArrayList<>();
+        args.add("-name");
+        args.add("test1.txt");
+
+        find.exec(args, in, output);
+
+        String expected = "./test1.txt";
+        String appOutput = stream.toString().trim();
+
+        Shell.setCurrentDirectory(originalDir);
+        assertEquals(expected, appOutput);
     }
 
     @Test
     public void testPatternGlobbing() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("find -name *.xml", out);
-        try (Scanner scn = new Scanner(in)) {
-            assertEquals("./pom.xml", scn.nextLine());
-        }
+        Shell.setCurrentDirectory(testDir.toString());
+        ArrayList<String> args = new ArrayList<>();
+        args.add("-name");
+        args.add("*.txt");
+
+        find.exec(args, in, output);
+
+        String[] expected = {
+                "./" + testFile1.getFileName().toString(),
+                "./" + testFile2.getFileName().toString()
+        };
+        String[] appOutput = stream.toString().split("[\n\t]");
+        Arrays.sort(expected);
+        Arrays.sort(appOutput);
+
+        Shell.setCurrentDirectory(originalDir);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
     public void testPatternWithStartingPath() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("find test_files -name test1.txt", out);
-        Scanner scn = new Scanner(in);
-        assertEquals("test_files/test1.txt", scn.nextLine());
-        scn.close();
+        Shell.setCurrentDirectory(testDir.toString());
+        ArrayList<String> args = new ArrayList<>();
+        args.add("-name");
+        args.add("*.txt");
+
+        find.exec(args, in, output);
+
+        String[] expected = {
+                "./" + testFile1.getFileName().toString(),
+                "./" + testFile2.getFileName().toString()
+        };
+        String[] appOutput = stream.toString().split("[\n\t]");
+        Arrays.sort(expected);
+        Arrays.sort(appOutput);
+
+        Shell.setCurrentDirectory(originalDir);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
     public void testPatternWithStartingPathGlobbing() throws IOException {
-        PipedInputStream in = new PipedInputStream();
-        PipedOutputStream out;
-        out = new PipedOutputStream(in);
-        Shell.eval("find test_files -name *.txt", out);
-        HashSet<String> expecteds = new HashSet<>(Arrays.asList("test_files/test1.txt", "test_files/test2.txt", "test_files/test3.txt", "test_files/test4.txt"));
-        Scanner scn = new Scanner(in);
-        for (int i = 0; i < expecteds.size(); i++) {
-            assertTrue(expecteds.contains(scn.nextLine()));
-        }
-        scn.close();
+        ArrayList<String> args = new ArrayList<>();
+        args.add(testDir.getFileName().toString());
+        args.add("-name");
+        args.add("*.txt");
+
+        find.exec(args, in, output);
+
+        String[] expected = {
+                "testDir/" + testFile1.getFileName().toString(),
+                "testDir/" + testFile2.getFileName().toString()
+        };
+        String[] appOutput = stream.toString().split("[\n\t]");
+        Arrays.sort(expected);
+        Arrays.sort(appOutput);
+
+        Shell.setCurrentDirectory(originalDir);
+        assertArrayEquals(expected, appOutput);
+    }
+
+    @Test(expected = MissingArgumentsException.class)
+    public void testNoArgs() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+
+        find.exec(args, in, output);
+    }
+
+    @Test(expected = MissingArgumentsException.class)
+    public void test1ArgumentNoNameFlag() throws IOException {ArrayList<String> args = new ArrayList<>();
+        args.add("pattern");
+
+        find.exec(args, in, output);
+    }
+
+    @Test(expected = InvalidArgumentsException.class)
+    public void test2ArgumentsNoNameFlag() throws IOException {ArrayList<String> args = new ArrayList<>();
+        args.add("path");
+        args.add("pattern");
+
+        find.exec(args, in, output);
+    }
+
+    @Test(expected = TooManyArgumentsException.class)
+    public void testTooManyArguments() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        args.add("One");
+        args.add("Two");
+        args.add("Three");
+        args.add("Four");
+
+        find.exec(args, in, output);
+    }
+
+    @Test(expected = NotExistingDirectoryException.class)
+    public void testDirectoryDoesNotExist() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        args.add("foo");
+        args.add("-name");
+        args.add("file");
+
+        find.exec(args, in, output);
+    }
+
+    @After
+    public void deleteTestFiles() throws IOException {
+        Files.delete(testFile1);
+        Files.delete(testFile2);
+        Files.delete(testDir);
     }
 }

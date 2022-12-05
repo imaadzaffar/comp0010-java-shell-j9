@@ -8,13 +8,14 @@ import java.util.Scanner;
 import uk.ac.ucl.shell.Shell;
 import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 public class Uniq implements Application {
 
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
-        if (args.size() > 2) { 
+        if (args.size() > 2) {
             throw new TooManyArgumentsException("uniq");
         }
 
@@ -27,6 +28,8 @@ public class Uniq implements Application {
                 while (reader.hasNextLine()) {
                     lines.add(reader.nextLine());
                 }
+            } catch (NullPointerException e) {
+                throw new MissingArgumentsException("uniq");
             }
         } else {
             File file = Shell.getCurrentDirectory().resolve(args.get(args.size() - 1)).toFile();

@@ -1,5 +1,6 @@
 package uk.ac.ucl.shell.applications;
 
+import uk.ac.ucl.shell.exceptions.InvalidArgumentsException;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
@@ -17,12 +18,13 @@ public class Sleep implements Application {
             throw new TooManyArgumentsException("sleep");
         }
 
-        int seconds = Integer.parseInt(args.get(0));
-        
         try {
+            int seconds = Integer.parseInt(args.get(0));
             Thread.sleep(seconds * 1000L);
             output.append("\n");
             output.flush();
+        } catch (IllegalArgumentException e) {
+            throw new InvalidArgumentsException("sleep");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

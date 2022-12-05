@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Tail extends Head {
-    @Override
-    public List<String> getLines(Scanner reader, int count) {
-        List<String> lines = new ArrayList<String>();
+public class Tail extends HeadTailSuper {
+    public Tail() {
+        super("tail");
+    }
 
-        while(reader.hasNextLine()) {
+    public List<String> getLines(Scanner reader, int count) {
+        List<String> lines = new ArrayList<>();
+
+        while (reader.hasNextLine()) {
             lines.add(reader.nextLine());
 
             if(lines.size() > count)

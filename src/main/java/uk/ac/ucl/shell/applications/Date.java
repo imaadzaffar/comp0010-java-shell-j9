@@ -10,7 +10,7 @@ import java.util.List;
 public class Date implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
-        if (args.size() > 1) {
+        if (args.size() > 0) {
             throw new TooManyArgumentsException("date");
         }
 

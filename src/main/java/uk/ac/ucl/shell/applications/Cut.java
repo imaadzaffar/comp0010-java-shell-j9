@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.ByteArrayOutputStream;
+import java.text.NumberFormat;
+import java.util.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -16,6 +19,7 @@ import java.lang.String;
 import uk.ac.ucl.shell.Shell;
 import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.InvalidArgumentsException;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 
 public class Cut implements Application {
@@ -29,18 +33,18 @@ public class Cut implements Application {
 
         for (String interval : intervals) {
             String[] values = interval.split("-");
-            for (String value : values) {
-                try {
-                    if (!value.equals("") && Integer.parseInt(value) == 0) {
-                        throw new RuntimeException("cut: wrong argument");
+            try {
+                for (String value : values) {
+                    if (!value.isEmpty() && Integer.parseInt(value) == 0) {
+                        throw new NumberFormatException();
                     }
-                } catch (NumberFormatException e) {
-                    throw new RuntimeException("cut: wrong argument");
                 }
+            } catch (NumberFormatException e) {
+                throw new InvalidArgumentsException("cut");
             }
         }
         
-        if(args.size() == 2) {
+        if (args.size() == 2) {
             try (Scanner reader = new Scanner(input)) {
                 while (reader.hasNextLine()) {
                     String cutLine = cutLine(reader.nextLine(), intervals);
@@ -49,6 +53,8 @@ public class Cut implements Application {
                     output.write(System.getProperty("line.separator"));
                     output.flush();
                 }
+            } catch (NullPointerException e) {
+                throw new MissingArgumentsException("cut");
             }
         } else {
             File file = Shell.getCurrentDirectory().resolve(args.get(args.size() - 1)).toFile();
