@@ -8,6 +8,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Scanner;
 
 public class Wc implements Application {
     @Override
@@ -16,11 +17,10 @@ public class Wc implements Application {
             throw new MissingArgumentsException("wc");
         }
 
-        BufferedReader reader;
         for (String fileName : args) {
-            int num_of_lines = 0;
-            int num_of_words = 0;
-            int num_of_bytes = 0;
+            int lineCount = 0;
+            int wordCount = 0;
+            int byteCount = 0;
 
             Path filePath = Shell.getCurrentDirectory().resolve(fileName);
 
@@ -28,16 +28,17 @@ public class Wc implements Application {
                 throw new FileNotFoundException("wc", filePath.toString());
             }
 
-            reader = new BufferedReader(new FileReader(filePath.toString()));
-            String line;
+            try(Scanner scanner = new Scanner(new FileReader(filePath.toString()))){
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
 
-            while ((line = reader.readLine()) != null) {
-                num_of_lines++;
-                num_of_words += line.split("\\s+").length;
-                num_of_bytes += line.length();
+                    lineCount++;
+                    wordCount += line.split("\\s+").length;
+                    byteCount += line.length();
+                }
             }
 
-            output.write(num_of_lines + " " + num_of_words + " " + num_of_bytes + " " + filePath.getFileName());
+            output.write(lineCount + " " + wordCount + " " + byteCount + " " + filePath.getFileName());
             output.write(System.getProperty("line.separator"));
             output.flush();
         }
