@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class SubstitutionTest {
     Substitution s;
     public SubstitutionTest() {
-        // Instantiated for the sake of coverage
+        // Substitution is a utility class which is instantiated for the sake of coverage
         s = new Substitution();
     }
 

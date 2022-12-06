@@ -4,6 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
+import uk.ac.ucl.shell.exceptions.ParseCancellationException;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import java.io.*;
@@ -19,12 +21,15 @@ public class ShellTest {
     PipedInputStream in;
     PipedOutputStream out;
     String originalDir;
+    Shell shell;
 
     Path testDir;
     Path testFile1;
     Path testFile2;
 
     public ShellTest() throws IOException {
+        // Shell is a utility class which is instantiated for the sake of coverage
+        shell = new Shell();
         in = new PipedInputStream();
         out = new PipedOutputStream(in);
         originalDir = Shell.getCurrentDirectory().toString();
@@ -139,6 +144,20 @@ public class ShellTest {
     @Test(expected = FileNotFoundException.class)
     public void testFileNotFound() throws IOException {
         String cmdline = "cat < NoSuchFile";
+
+        Shell.eval(cmdline, out);
+    }
+
+    @Test(expected = ParseCancellationException.class)
+    public void testParserError() throws IOException {
+        String cmdline = "echo a; ";
+
+        Shell.eval(cmdline, out);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testErrorDuringSequencing() throws IOException {
+        String cmdline = "echo a; cut";
 
         Shell.eval(cmdline, out);
     }
