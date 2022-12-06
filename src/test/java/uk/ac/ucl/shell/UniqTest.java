@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class UniqTest {
@@ -60,10 +61,10 @@ public class UniqTest {
 
         uniq.exec(args, in, output);
 
-        String expected = "a\nA\na\nb\nc\nd\nD";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"a", "A", "a", "b", "c", "d", "D"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -74,10 +75,10 @@ public class UniqTest {
 
         uniq.exec(args, in, output);
 
-        String expected = "a\nb\nc\nd";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"a", "b", "c", "d"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -87,10 +88,10 @@ public class UniqTest {
 
         uniq.exec(args, in, output);
 
-        String expected = "a\nA\na\nb\nC\nc\nD";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"a", "A", "a", "b", "C", "c", "D"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -101,10 +102,10 @@ public class UniqTest {
 
         uniq.exec(args, in, output);
 
-        String expected = "a\nb\nC\nD";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"a", "b", "C", "D"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test(expected = MissingArgumentsException.class)

@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -65,10 +66,10 @@ public class TailTest {
 
         tail.exec(args,  in, output);
 
-        String expected = "b\nc\nd\ne\nf\ng\nh\ni\nj\nk";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"b", "c", "d", "e", "f", "g", "h", "i", "j", "k"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -78,10 +79,10 @@ public class TailTest {
 
         tail.exec(args, in, output);
 
-        String expected = "q\nr\ns\nt\nu\nv\nw\nx\ny\nz";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -108,10 +109,10 @@ public class TailTest {
 
         tail.exec(args, in, output);
 
-        String expected = "x\ny\nz";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"x", "y", "z"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -123,10 +124,10 @@ public class TailTest {
 
         tail.exec(args, in, output);
 
-        String expected = "a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk\nl\nm\nn\no\np\nq\nr\ns\nt\nu\nv\nw\nx\ny\nz";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -138,10 +139,10 @@ public class TailTest {
 
         tail.exec(args, in, output);
 
-        String expected = "g\nh\ni\nj\nk";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"g", "h", "i", "j", "k"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test(expected = MissingArgumentsException.class)
