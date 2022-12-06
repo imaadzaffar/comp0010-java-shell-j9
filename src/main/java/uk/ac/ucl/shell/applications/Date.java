@@ -15,8 +15,9 @@ public class Date implements Application {
         }
 
         String date = new java.util.Date().toString();
-        output.append(date);
-        output.append("\n");
+        
+        output.write(date);
+        output.write(System.getProperty("line.separator"));
         output.flush();
     }
 }

@@ -21,7 +21,8 @@ public class Sleep implements Application {
         try {
             int seconds = Integer.parseInt(args.get(0));
             Thread.sleep(seconds * 1000L);
-            output.append("\n");
+            
+            output.write(System.getProperty("line.separator"));
             output.flush();
         } catch (IllegalArgumentException e) {
             throw new InvalidArgumentsException("sleep");

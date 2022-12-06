@@ -31,7 +31,7 @@ public class SleepTest {
 
         sleep.exec(args, in, output);
 
-        String expected = "\n";
+        String expected = System.getProperty("line.separator");
         String appOutput = stream.toString();
 
         assertEquals(expected, appOutput);

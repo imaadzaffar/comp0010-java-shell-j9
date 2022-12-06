@@ -3,7 +3,13 @@ package uk.ac.ucl.shell.applications;
 import uk.ac.ucl.shell.exceptions.UnknownApplicationException;
 
 public class ApplicationFactory {
-    public Application getApp(String appName) {
+    /**
+     * Returns the corresponding <b>Application</b> from the passed <b>appName</b>
+     * @param appName The requested application name
+     * @return The corresponding application
+     * @throws UnknownApplicationException If the passed application name is invalid
+     */
+    public Application getApp(String appName) throws UnknownApplicationException {
         boolean unsafe = false;
 
         if(appName.startsWith("_")) {
