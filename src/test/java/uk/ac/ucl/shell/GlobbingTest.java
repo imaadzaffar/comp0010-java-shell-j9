@@ -112,6 +112,34 @@ public class GlobbingTest {
         assertArrayEquals(expected, globOutput.toArray());
     }
 
+    @Test
+    public void testFindGlobbing() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        args.add("-name");
+        args.add("*.txt");
+        ArrayList<String> globOutput;
+
+        globOutput = globbing.glob(args, false);
+
+        String [] expected = {"-name", "*.txt"};
+
+        assertArrayEquals(expected, globOutput.toArray());
+    }
+
+    @Test
+    public void testSingleQuoteArguments() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        args.add("'abc'");
+        args.add("\"'abc'\"");
+        ArrayList<String> globOutput;
+
+        globOutput = globbing.glob(args, false);
+
+        String [] expected = {"abc", "'abc'"};
+
+        assertArrayEquals(expected, globOutput.toArray());
+    }
+
     @After
     public void deleteTestFiles() throws IOException {
         Files.delete(testFile1);
