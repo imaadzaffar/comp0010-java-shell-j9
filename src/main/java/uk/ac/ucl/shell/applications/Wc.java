@@ -14,7 +14,13 @@ public class Wc implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if (args.isEmpty()) {
-            throw new MissingArgumentsException("wc");
+            try (Scanner reader = new Scanner(input)) {
+                while (reader.hasNextLine()) {
+                    args.add(reader.nextLine());
+                }
+            } catch (NullPointerException e) {
+                throw new MissingArgumentsException("wc");
+            }
         }
 
         for (String fileName : args) {

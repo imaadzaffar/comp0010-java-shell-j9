@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.util.*;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 public class SortTest {
     Sort sort;
