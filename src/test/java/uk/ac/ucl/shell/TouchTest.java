@@ -8,6 +8,7 @@ import uk.ac.ucl.shell.applications.Touch;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -30,8 +31,9 @@ public class TouchTest {
     @Test
     public void testCreateOneFile() throws IOException {
         ArrayList<String> args = new ArrayList<>();
-        args.add("test1.txt");
-        Path filePath = Shell.getCurrentDirectory().resolve("test1.txt");
+        String fileName = "test1.txt";
+        args.add(fileName);
+        Path filePath = Shell.getCurrentDirectory().resolve(fileName);
         filesToRemove.add(filePath);
 
         touch.exec(args, in, output);
@@ -42,17 +44,33 @@ public class TouchTest {
     @Test
     public void testCreateMultipleFiles() throws IOException {
         ArrayList<String> args = new ArrayList<>();
-        args.add("test2.txt");
-        args.add("test3.txt");
+        String fileName = "test2.txt";
+        String fileName2 = "test3.txt";
+        args.add(fileName);
+        args.add(fileName2);
 
-        Path filePath = Shell.getCurrentDirectory().resolve("test2.txt");
-        Path filePath2 = Shell.getCurrentDirectory().resolve("test3.txt");
+        Path filePath = Shell.getCurrentDirectory().resolve(fileName);
+        Path filePath2 = Shell.getCurrentDirectory().resolve(fileName2);
         filesToRemove.add(filePath);
         filesToRemove.add(filePath2);
 
         touch.exec(args, in, output);
 
         assertTrue(Files.exists(filePath) && Files.exists(filePath2));
+    }
+
+    @Test
+    public void testStandardInput() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        String fileName = "test4.txt";
+        in = new ByteArrayInputStream(fileName.getBytes(StandardCharsets.UTF_8));
+        Path filePath = Shell.getCurrentDirectory().resolve(fileName);
+        filesToRemove.add(filePath);
+
+        touch.exec(args, in, output);
+
+        assertTrue(Files.exists(filePath));
+
     }
 
     @Test(expected = MissingArgumentsException.class)

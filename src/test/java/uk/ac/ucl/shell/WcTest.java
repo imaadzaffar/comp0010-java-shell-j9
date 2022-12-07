@@ -99,6 +99,19 @@ public class WcTest {
         assertEquals(expected, appOutput);
     }
 
+    @Test
+    public void testStandardInput() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        in = new ByteArrayInputStream(testFile1.toString().getBytes(StandardCharsets.UTF_8));
+
+        wc.exec(args, in, output);
+
+        String expected = "2 4 12 " + testFile1.getFileName();
+        String appOutput = stream.toString().trim();
+
+        assertEquals(expected, appOutput);
+    }
+
     @Test(expected = MissingArgumentsException.class)
     public void testNoArgs() throws IOException {
         ArrayList<String> args = new ArrayList<>();
