@@ -2,11 +2,8 @@ package uk.ac.ucl.shell.applications;
 
 import uk.ac.ucl.shell.Shell;
 import uk.ac.ucl.shell.exceptions.FileAlreadyExistsException;
-import uk.ac.ucl.shell.exceptions.FileNotFoundException;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
-import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
