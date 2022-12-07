@@ -76,6 +76,7 @@ public class Shell {
      * The main entry point of the Shell application.
      * @param args The command line arguments to execute the Shell
      */
+    @Generated
     public static void main(String[] args) {
         if (args.length > 0) {
             if (args.length != 2) {

@@ -56,7 +56,7 @@ public class Call implements Command<CallContext> {
         if (outputFile != null) {
             try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
                 outputStream.write(output.toByteArray());
-            } catch (IOException eception) {
+            } catch (IOException ex) {
                 throw new RuntimeException("call: failed to write to outfile file " + outputFile.getPath());
             }
 
