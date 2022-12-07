@@ -19,6 +19,7 @@ public class Sequence implements Command<SequenceContext> {
                 continue;
             }
 
+            // Reset the piped input as sequenced commands are independent
             visitor.setPipedInput(null);
 
             ByteArrayOutputStream childOutput = child.accept(visitor);

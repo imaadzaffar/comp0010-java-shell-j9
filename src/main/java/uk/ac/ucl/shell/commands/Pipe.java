@@ -15,7 +15,6 @@ public class Pipe implements Command<PipeContext> {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         for (ParseTree child : context.children) {
-            // skips over pipe characters
             if (child.getText().startsWith("|")) {
                 continue;
             }

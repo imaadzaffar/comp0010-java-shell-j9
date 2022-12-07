@@ -24,6 +24,7 @@ public class Globbing extends SimpleFileVisitor<Path> {
             // The spec doesn't specify how we should handle globbing for applications that support wildcards already (ie: Find)
             // To prevent issues we disable globbing if the value is linked to a flag       
             if(!arg.contains("*") || globbedArgs.size() > 0 && globbedArgs.get(globbedArgs.size() - 1).startsWith("-")) {
+                // Don't remove single quotes if substitution has already been performed as this would break substituting with file contents containing single quotes
                 if (arg.contains("'") && !arg.startsWith("\"") && !substituted) {
                     globbedArgs.add(arg.replace("'", ""));
                 } else {
@@ -49,6 +50,7 @@ public class Globbing extends SimpleFileVisitor<Path> {
     public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attr) {
         Path name = Shell.getCurrentDirectory().relativize(directory);
 
+        // Add all directories matching the globbing pattern
         if (fileMatcher.matches(name)) {
             matches.add(name.toString().replace("\\", "/"));
         }
@@ -61,6 +63,8 @@ public class Globbing extends SimpleFileVisitor<Path> {
         Path name = Shell.getCurrentDirectory().relativize(file);
         Path directory = Shell.getCurrentDirectory().relativize(file).getParent();
 
+        // Add all files matching the globbing pattern and if part of a sub-directory, must also match the the directory pattern
+        // ie: "dir1/*" should only match files in dir1's directory and not any sub-directories
         if (fileMatcher.matches(name) && (name.getNameCount() == 1 || dirMatcher != null && dirMatcher.matches(directory))) {
             matches.add(name.toString().replace("\\", "/"));
         }

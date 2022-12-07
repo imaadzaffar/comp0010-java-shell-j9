@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
+ /**
+ * UnsafeDecorator wraps a passed <b>Application</b> and silences its exceptions to the output.
+ */
 public class UnsafeDecorator implements Application {
     private Application baseApplication;
 

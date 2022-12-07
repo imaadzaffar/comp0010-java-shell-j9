@@ -24,6 +24,7 @@ public class Call implements Command<CallContext> {
         File outputFile = null;
         ParseTree command = null;
 
+        // Find the call command parts as these might not be ordered
         for (ParseTree child : context.children) {
             String text = child.getText();
 
@@ -38,6 +39,7 @@ public class Call implements Command<CallContext> {
             }
         }
 
+        // If we expected both and input and an output but only received one (ex: echo a > a > a)
         if ((inputFile == null || outputFile == null) && context.getChildCount() == 3) {
             throw new InvalidArgumentsException("call");
         }
