@@ -34,7 +34,7 @@ public class Find extends SimpleFileVisitor<Path> implements Application {
         File startDir = args.size() == 2 ? Shell.getCurrentDirectory().toFile() : Shell.getCurrentDirectory().resolve(args.get(0)).toFile();
         String filenamePattern = args.get(args.size() - 1);
 
-        if (!startDir.exists() || !startDir.isDirectory()) {
+        if (!startDir.isDirectory()) {
             throw new NotExistingDirectoryException("find", startDir.getName());
         }
 
