@@ -85,6 +85,22 @@ public class LsTest {
         assertArrayEquals(expected, appOutput);
     }
 
+    @Test
+    public void testHiddenFiles() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        args.add("-a");
+        args.add(testDirLs.toString());
+
+        ls.exec(args, in, output);
+
+        String[] expected = {testFile1.getFileName().toString(), testFile2.getFileName().toString(), testFile3.getFileName().toString()};
+        String[] appOutput = stream.toString().trim().split("[\n\t]");
+        Arrays.sort(expected);
+        Arrays.sort(appOutput);
+
+        assertArrayEquals(expected, appOutput);
+    }
+
     @Test(expected = NotExistingDirectoryException.class)
     public void testNotExistingStartingPath() throws IOException {
         ArrayList<String> args = new ArrayList<>();
