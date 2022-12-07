@@ -39,7 +39,7 @@ public class Call implements Command<CallContext> {
             }
         }
 
-        if (command == null || (inputFile == null && outputFile == null)) {
+        if ((inputFile == null || outputFile == null) && context.getChildCount() == 3) {
             throw new InvalidArgumentsException("call");
         }
 
@@ -56,8 +56,8 @@ public class Call implements Command<CallContext> {
         if (outputFile != null) {
             try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
                 outputStream.write(output.toByteArray());
-            } catch (IOException ex) {
-                throw new RuntimeException("call: failed to write to outfile file " + outputFile.getPath());
+            } catch (Exception ex) {
+                throw new CannotOpenFileException("call", outputFile.getPath());
             }
 
             return null;

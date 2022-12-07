@@ -140,6 +140,18 @@ public class GlobbingTest {
         assertArrayEquals(expected, globOutput.toArray());
     }
 
+    @Test
+    public void testSubstituted() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        args.add("'abc'");
+
+        ArrayList<String> globOutput = globbing.glob(args, true);
+
+        String [] expected = {"'abc'"};
+
+        assertArrayEquals(expected, globOutput.toArray());
+    }
+
     @After
     public void deleteTestFiles() throws IOException {
         Files.delete(testFile1);

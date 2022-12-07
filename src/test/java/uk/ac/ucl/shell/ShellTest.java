@@ -3,15 +3,20 @@ package uk.ac.ucl.shell;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
+import uk.ac.ucl.shell.exceptions.InvalidArgumentsException;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 import uk.ac.ucl.shell.exceptions.ParseCancellationException;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Scanner;
 
@@ -141,6 +146,27 @@ public class ShellTest {
         Shell.eval(cmdline, out);
     }
 
+    @Test(expected = InvalidArgumentsException.class)
+    public void testInvalidArguments() throws IOException {
+        String cmdline = "echo a > One > Two";
+
+        Shell.eval(cmdline, out);
+    }
+
+    @Test(expected = CannotOpenFileException.class)
+    public void testLockedFile() throws IOException {
+        Shell.setCurrentDirectory(testDir.toString());
+
+        String cmdline = "echo a > test2.txt";
+
+        try (RandomAccessFile file = new RandomAccessFile(testFile2.toFile(), "rw")) { 
+            file.getChannel().lock();
+            Shell.eval(cmdline, out);
+        }
+
+        Shell.setCurrentDirectory(originalDir);
+    }
+
     @Test(expected = FileNotFoundException.class)
     public void testFileNotFound() throws IOException {
         String cmdline = "cat < NoSuchFile";
@@ -158,6 +184,13 @@ public class ShellTest {
     @Test(expected = RuntimeException.class)
     public void testErrorDuringSequencing() throws IOException {
         String cmdline = "echo a; cut";
+
+        Shell.eval(cmdline, out);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testErrorDuringSubstitution() throws IOException {
+        String cmdline = "echo `test`";
 
         Shell.eval(cmdline, out);
     }
