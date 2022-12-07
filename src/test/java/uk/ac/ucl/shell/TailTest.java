@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Before;
 
 import org.junit.Test;
-import uk.ac.ucl.shell.applications.Head;
 import uk.ac.ucl.shell.applications.Tail;
 import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
