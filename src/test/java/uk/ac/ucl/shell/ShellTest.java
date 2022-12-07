@@ -7,16 +7,13 @@ import org.junit.Test;
 import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
 import uk.ac.ucl.shell.exceptions.InvalidArgumentsException;
-import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 import uk.ac.ucl.shell.exceptions.ParseCancellationException;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import java.io.*;
-import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Scanner;
 
@@ -31,6 +28,7 @@ public class ShellTest {
     Path testDir;
     Path testFile1;
     Path testFile2;
+    Path testFile3;
 
     public ShellTest() throws IOException {
         // Shell is a utility class which is instantiated for the sake of coverage
@@ -47,12 +45,14 @@ public class ShellTest {
         testDir = Shell.getCurrentDirectory().resolve(dirName);
         testFile1 = Shell.getCurrentDirectory().resolve(dirName).resolve("test1.txt");
         testFile2 = Shell.getCurrentDirectory().resolve(dirName).resolve("test2.txt");
+        testFile3 = Shell.getCurrentDirectory().resolve(dirName).resolve("test3.txt");
 
         List<String> lines = List.of("Hello");
 
         Files.createDirectories(testDir);
         Files.createFile(testFile1);
         Files.createFile(testFile2);
+        Files.createFile(testFile3).toFile().setReadOnly();
 
         try {
             Files.write(testFile1, lines, StandardCharsets.UTF_8);
@@ -69,10 +69,10 @@ public class ShellTest {
 
         String [] expected = {"a"};
 
-        Scanner scn = new Scanner(in);
-        scn.useDelimiter(System.getProperty("line.separator"));
-        for (String s : expected) {
-            assertEquals(s, scn.nextLine());
+        try(Scanner scanner = new Scanner(in)) {
+            for (String s : expected) {
+                assertEquals(s, scanner.nextLine());
+            }
         }
     }
 
@@ -84,10 +84,10 @@ public class ShellTest {
 
         String [] expected = {"a", "b"};
 
-        Scanner scn = new Scanner(in);
-        scn.useDelimiter(System.getProperty("line.separator"));
-        for (String s : expected) {
-            assertEquals(s, scn.nextLine());
+        try(Scanner scanner = new Scanner(in)) {
+            for (String s : expected) {
+                assertEquals(s, scanner.nextLine());
+            }
         }
     }
 
@@ -99,10 +99,10 @@ public class ShellTest {
 
         String [] expected = {"a"};
 
-        Scanner scn = new Scanner(in);
-        scn.useDelimiter(System.getProperty("line.separator"));
-        for (String s : expected) {
-            assertEquals(s, scn.nextLine());
+        try(Scanner scanner = new Scanner(in)) {
+            for (String s : expected) {
+                assertEquals(s, scanner.nextLine());
+            }
         }
     }
 
@@ -113,13 +113,14 @@ public class ShellTest {
 
         Shell.eval(cmdline, out);
 
-        String [] expected = {"Hello"};
-        Scanner scn = new Scanner(in);
-        scn.useDelimiter(System.getProperty("line.separator"));
+        String[] expected = {"Hello"};
+
         Shell.setCurrentDirectory(originalDir);
 
-        for (String s : expected) {
-            assertEquals(s, scn.nextLine());
+        try(Scanner scanner = new Scanner(in)) {
+            for (String s : expected) {
+                assertEquals(s, scanner.nextLine());
+            }
         }
     }
 
@@ -131,11 +132,13 @@ public class ShellTest {
         Shell.eval(cmdline, out);
 
         String [] expected = {"a"};
-        BufferedReader reader = new BufferedReader(new FileReader(testFile2.toString()));
+
         Shell.setCurrentDirectory(originalDir);
 
-        for (String s : expected) {
-            assertEquals(s, reader.readLine());
+        try(Scanner scanner = new Scanner(testFile2)) {
+            for (String s : expected) {
+                assertEquals(s, scanner.nextLine());
+            }
         }
     }
 
@@ -155,16 +158,9 @@ public class ShellTest {
 
     @Test(expected = CannotOpenFileException.class)
     public void testLockedFile() throws IOException {
-        Shell.setCurrentDirectory(testDir.toString());
+        String cmdline = "echo a > testDir/test3.txt";
 
-        String cmdline = "echo a > test2.txt";
-
-        try (RandomAccessFile file = new RandomAccessFile(testFile2.toFile(), "rw")) { 
-            file.getChannel().lock();
-            Shell.eval(cmdline, out);
-        }
-
-        Shell.setCurrentDirectory(originalDir);
+        Shell.eval(cmdline, out);
     }
 
     @Test(expected = FileNotFoundException.class)
@@ -199,6 +195,10 @@ public class ShellTest {
     public void deleteTestFiles() throws IOException {
         Files.delete(testFile1);
         Files.delete(testFile2);
+
+        testFile3.toFile().setWritable(true);
+        Files.delete(testFile3);
+
         Files.delete(testDir);
     }
 }
