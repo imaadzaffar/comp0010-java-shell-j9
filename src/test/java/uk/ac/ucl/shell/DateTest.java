@@ -7,7 +7,6 @@ import uk.ac.ucl.shell.applications.Date;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import java.io.*;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

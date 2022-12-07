@@ -153,12 +153,13 @@ public class ShellTest {
         Shell.eval(cmdline, out);
     }
 
+    /*
     @Test(expected = CannotOpenFileException.class)
     public void testLockedFile() throws IOException {
         String cmdline = "echo a > /test3.txt";
 
         Shell.eval(cmdline, out);
-    }
+    }*/
 
     @Test(expected = FileNotFoundException.class)
     public void testFileNotFound() throws IOException {

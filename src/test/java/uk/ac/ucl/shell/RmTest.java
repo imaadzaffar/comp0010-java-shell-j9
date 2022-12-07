@@ -2,8 +2,6 @@ package uk.ac.ucl.shell;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ucl.shell.applications.Rm;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
