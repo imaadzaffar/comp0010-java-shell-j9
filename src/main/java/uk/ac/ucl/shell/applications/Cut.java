@@ -5,9 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.ByteArrayOutputStream;
-import java.text.NumberFormat;
-import java.util.*;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -15,7 +12,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.lang.String;
 import uk.ac.ucl.shell.Shell;
 import uk.ac.ucl.shell.exceptions.CannotOpenFileException;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
@@ -25,7 +21,7 @@ import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
 public class Cut implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
-        if ((args.size() <= 1) || !args.get(0).equals("-b")) {
+        if (args.size() <= 1 || !args.get(0).equals("-b")) {
             throw new MissingArgumentsException("cut");
         }
 

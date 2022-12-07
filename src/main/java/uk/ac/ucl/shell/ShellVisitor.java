@@ -1,7 +1,11 @@
 package uk.ac.ucl.shell;
 
 import java.io.*;
-import uk.ac.ucl.shell.ShellGrammarParser.*;
+import uk.ac.ucl.shell.ShellGrammarParser.SequenceContext;
+import uk.ac.ucl.shell.ShellGrammarParser.PipeContext;
+import uk.ac.ucl.shell.ShellGrammarParser.ArgumentContext;
+import uk.ac.ucl.shell.ShellGrammarParser.CallContext;
+
 import uk.ac.ucl.shell.commands.*;
 
 public class ShellVisitor extends ShellGrammarBaseVisitor<ByteArrayOutputStream>  {

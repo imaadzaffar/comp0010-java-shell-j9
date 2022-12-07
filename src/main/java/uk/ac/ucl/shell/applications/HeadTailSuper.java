@@ -23,7 +23,7 @@ public abstract class HeadTailSuper implements Application {
             throw new MissingArgumentsException(appName);
         } else if (args.size() > 3) {
             throw new TooManyArgumentsException(appName);
-        } else if ((args.size() > 1 && !args.get(0).equals("-n"))) {
+        } else if (args.size() > 1 && !args.get(0).equals("-n")) {
             throw new InvalidArgumentsException(appName);
         }
 

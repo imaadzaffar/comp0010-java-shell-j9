@@ -39,7 +39,7 @@ public class Call implements Command<CallContext> {
             }
         }
 
-        if (command == null || (inputFile == null && outputFile == null)) {
+        if (command == null || inputFile == null && outputFile == null) {
             throw new InvalidArgumentsException("call");
         }
 
