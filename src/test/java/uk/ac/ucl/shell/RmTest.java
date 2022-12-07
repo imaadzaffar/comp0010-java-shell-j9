@@ -7,7 +7,6 @@ import org.junit.Test;
 import uk.ac.ucl.shell.applications.Rm;
 import uk.ac.ucl.shell.exceptions.FileNotFoundException;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
-import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import java.io.*;
 import java.nio.file.Files;

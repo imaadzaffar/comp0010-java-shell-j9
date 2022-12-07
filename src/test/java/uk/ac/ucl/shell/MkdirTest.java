@@ -7,7 +7,6 @@ import org.junit.Test;
 import uk.ac.ucl.shell.applications.Mkdir;
 import uk.ac.ucl.shell.exceptions.FileAlreadyExistsException;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
-import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import java.io.*;
 import java.nio.file.Files;
