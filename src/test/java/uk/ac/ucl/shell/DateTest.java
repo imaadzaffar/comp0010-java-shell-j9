@@ -7,7 +7,11 @@ import uk.ac.ucl.shell.applications.Date;
 import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class DateTest {
     Date date;
@@ -23,15 +27,15 @@ public class DateTest {
     }
 
     @Test
-    public void testNormal() throws IOException {
+    public void testNormal() throws IOException, ParseException {
         ArrayList<String> args = new ArrayList<>();
 
+        long startTime = new java.util.Date().getTime();
         date.exec(args, in, output);
-
-        String expected = new java.util.Date().toString();
         String appOutput = stream.toString().trim();
-
-        assertEquals(expected, appOutput);
+        SimpleDateFormat formatter = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+        long outputTime = formatter.parse(appOutput).getTime();
+        assertTrue(startTime - outputTime <= 5000);
     }
 
     @Test(expected = TooManyArgumentsException.class)
