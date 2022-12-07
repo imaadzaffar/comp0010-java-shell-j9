@@ -28,7 +28,6 @@ public class ShellTest {
     Path testDir;
     Path testFile1;
     Path testFile2;
-    Path testFile3;
 
     public ShellTest() throws IOException {
         // Shell is a utility class which is instantiated for the sake of coverage
@@ -45,14 +44,12 @@ public class ShellTest {
         testDir = Shell.getCurrentDirectory().resolve(dirName);
         testFile1 = Shell.getCurrentDirectory().resolve(dirName).resolve("test1.txt");
         testFile2 = Shell.getCurrentDirectory().resolve(dirName).resolve("test2.txt");
-        testFile3 = Shell.getCurrentDirectory().resolve(dirName).resolve("test3.txt");
 
         List<String> lines = List.of("Hello");
 
         Files.createDirectories(testDir);
         Files.createFile(testFile1);
         Files.createFile(testFile2);
-        Files.createFile(testFile3).toFile().setReadOnly();
 
         try {
             Files.write(testFile1, lines, StandardCharsets.UTF_8);
@@ -158,7 +155,7 @@ public class ShellTest {
 
     @Test(expected = CannotOpenFileException.class)
     public void testLockedFile() throws IOException {
-        String cmdline = "echo a > testDir/test3.txt";
+        String cmdline = "echo a > /test3.txt";
 
         Shell.eval(cmdline, out);
     }
@@ -195,10 +192,6 @@ public class ShellTest {
     public void deleteTestFiles() throws IOException {
         Files.delete(testFile1);
         Files.delete(testFile2);
-
-        testFile3.toFile().setWritable(true);
-        Files.delete(testFile3);
-
         Files.delete(testDir);
     }
 }
