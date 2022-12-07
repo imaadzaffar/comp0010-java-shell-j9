@@ -72,6 +72,12 @@ public class Cut implements Application {
         }
     }
 
+    /**
+     * Returns the extracted bytes from the input line as a string
+     * @param line The line to cut
+     * @param intervals The byte intervals to return
+     * @throws IOException If an error occured
+     */
     private String cutLine(String line, String[] intervals) throws IOException {
         try(ByteArrayOutputStream output = new ByteArrayOutputStream()) {
             byte[] bytes = line.getBytes();
