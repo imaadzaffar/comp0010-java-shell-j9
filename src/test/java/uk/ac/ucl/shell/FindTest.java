@@ -79,7 +79,8 @@ public class FindTest {
                 "./" + testFile1.getFileName().toString(),
                 "./" + testFile2.getFileName().toString()
         };
-        String[] appOutput = stream.toString().split("[\n\t]");
+
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
         Arrays.sort(expected);
         Arrays.sort(appOutput);
 
@@ -100,7 +101,8 @@ public class FindTest {
                 "./" + testFile1.getFileName().toString(),
                 "./" + testFile2.getFileName().toString()
         };
-        String[] appOutput = stream.toString().split("[\n\t]");
+
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
         Arrays.sort(expected);
         Arrays.sort(appOutput);
 
@@ -121,7 +123,8 @@ public class FindTest {
                 "testDir/" + testFile1.getFileName().toString(),
                 "testDir/" + testFile2.getFileName().toString()
         };
-        String[] appOutput = stream.toString().split("[\n\t]");
+        
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
         Arrays.sort(expected);
         Arrays.sort(appOutput);
 

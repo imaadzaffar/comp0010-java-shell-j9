@@ -1,5 +1,6 @@
 package uk.ac.ucl.shell;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
@@ -59,10 +60,10 @@ public class HeadTest {
 
         head.exec(args, in, output);
 
-        String expected = "a\nb\nc\nd\ne\nf\ng\nh\ni\nj";
-        String appOutput = stream.toString().trim();
-
-        assertEquals(expected, appOutput);
+        String[] expected = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+        
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -74,10 +75,10 @@ public class HeadTest {
 
         head.exec(args, in, output);
 
-        String expected = "a\nb\nc\nd\ne";
-        String appOutput = stream.toString().trim();
-
-        assertEquals(expected, appOutput);
+        String[] expected = {"a", "b", "c", "d", "e"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+        
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -87,10 +88,10 @@ public class HeadTest {
 
         head.exec(args, in, output);
 
-        String expected = "a\nb\nc\nd\ne\nf\ng\nh\ni\nj";
-        String appOutput = stream.toString().trim();
-
-        assertEquals(expected, appOutput);
+        String[] expected = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+        
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -117,10 +118,10 @@ public class HeadTest {
 
         head.exec(args, in, output);
 
-        String expected = "a\nb\nc";
-        String appOutput = stream.toString().trim();
-
-        assertEquals(expected, appOutput);
+        String[] expected = {"a", "b", "c"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+        
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -132,10 +133,10 @@ public class HeadTest {
 
         head.exec(args, in, output);
 
-        String expected = "a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk\nl\nm\nn\no\np\nq\nr\ns\nt\nu\nv\nw\nx\ny\nz";
-        String appOutput = stream.toString().trim();
-
-        assertEquals(expected, appOutput);
+        String[] expected = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+        
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test(expected = MissingArgumentsException.class)

@@ -7,9 +7,9 @@ import org.junit.Test;
 import uk.ac.ucl.shell.applications.Mkdir;
 import uk.ac.ucl.shell.exceptions.FileAlreadyExistsException;
 import uk.ac.ucl.shell.exceptions.MissingArgumentsException;
-import uk.ac.ucl.shell.exceptions.TooManyArgumentsException;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class MkdirTest {
     }
 
     @Test
-    public void testNormal() throws IOException {
+    public void testSingleDirectory() throws IOException {
         ArrayList<String> args = new ArrayList<>();
         args.add("testDirOne");
 
@@ -42,20 +42,40 @@ public class MkdirTest {
         assertTrue(Files.exists(newDirPath));
     }
 
-    @Test(expected = TooManyArgumentsException.class)
-    public void testTooManyArguments() throws IOException {
+    @Test
+    public void testMultipleDirectories() throws IOException {
         ArrayList<String> args = new ArrayList<>();
-        args.add("One");
-        args.add("Two");
+        args.add("testDirThree");
+        args.add("testDirFour");
 
         mkdir.exec(args, in, output);
+
+        Path newDirPath = Shell.getCurrentDirectory().resolve("testDirThree");
+        Path newDirPath2 = Shell.getCurrentDirectory().resolve("testDirFour");
+        pathsToRemove.add(newDirPath);
+        pathsToRemove.add(newDirPath2);
+
+        assertTrue(Files.exists(newDirPath) && Files.exists(newDirPath2));
+    }
+
+    @Test
+    public void testStandardInput() throws IOException {
+        ArrayList<String> args = new ArrayList<>();
+        in = new ByteArrayInputStream("testDirFive".getBytes(StandardCharsets.UTF_8));
+
+        mkdir.exec(args, in, output);
+
+        Path newDirPath = Shell.getCurrentDirectory().resolve("testDirFive");
+        pathsToRemove.add(newDirPath);
+
+        assertTrue(Files.exists(newDirPath));
     }
 
     @Test(expected = MissingArgumentsException.class)
     public void testNoArgs() throws IOException {
         ArrayList<String> args = new ArrayList<>();
 
-        mkdir.exec(args, in, output);
+        mkdir.exec(args, null, output);
     }
 
     @Test(expected = FileAlreadyExistsException.class)

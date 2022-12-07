@@ -99,8 +99,10 @@ public class GrepTest {
 
         grep.exec(args, in, output);
 
-        String appOutput = stream.toString().trim();
-        assertEquals("one\nthree", appOutput);
+        String[] expected = {"one", "three"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -119,7 +121,8 @@ public class GrepTest {
                 testFile1.getFileName() + ":three",
                 testFile2.getFileName() + ":five"
         };
-        String[] appOutput = stream.toString().split("[\n\t]");
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+
         Arrays.sort(expected);
         Arrays.sort(appOutput);
 
@@ -141,7 +144,7 @@ public class GrepTest {
                 "one",
                 "three"
         };
-        String[] appOutput = stream.toString().split("[\n\t]");
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
         Arrays.sort(expected);
         Arrays.sort(appOutput);
 

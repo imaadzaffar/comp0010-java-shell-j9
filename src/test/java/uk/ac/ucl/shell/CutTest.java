@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class CutTest {
@@ -62,10 +63,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "a\nf\nk";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"a", "f", "k"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -77,9 +78,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "bc\ngh\nlm";
-        String appOutput = stream.toString().trim();
-        assertEquals(expected, appOutput);
+        String[] expected = {"bc", "gh", "lm"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -91,10 +93,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "cde\nhij\nmno";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"cde", "hij", "mno"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -102,11 +104,14 @@ public class CutTest {
         List<String> args = new ArrayList<>();
         args.add("-b");
         args.add("-3");
+        in = new ByteArrayInputStream("abcde\nfghij\nklmno".getBytes(StandardCharsets.UTF_8));
 
-        cut.exec(args, new ByteArrayInputStream("abcde\nfghij\nklmno".getBytes(StandardCharsets.UTF_8)), output);
+        cut.exec(args, in, output);
 
-        String appOutput = stream.toString().trim();
-        assertEquals("abc\nfgh\nklm", appOutput);
+        String[] expected = {"abc", "fgh", "klm"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test(expected = MissingArgumentsException.class)
@@ -157,10 +162,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "a\nf\nk";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"a", "f", "k"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -186,10 +191,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "abc\nfgh\nklm";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"abc", "fgh", "klm"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -201,10 +206,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "e\nj\no";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"e", "j", "o"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -216,10 +221,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "abcde\nfghij\nklmno";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"abcde", "fghij", "klmno"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -231,10 +236,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "cde\nhij\nmno";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"cde", "hij", "mno"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -246,10 +251,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "abcde\nfghij\nklmno";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"abcde", "fghij", "klmno"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -276,10 +281,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "abc\nfgh\nklm";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"abc", "fgh", "klm"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -291,10 +296,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "a\nf\nk";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"a", "f", "k"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -306,10 +311,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "abcde\nfghij\nklmno";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"abcde", "fghij", "klmno"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -321,10 +326,10 @@ public class CutTest {
 
         cut.exec(args, in, output);
 
-        String expected = "abcde\nfghij\nklmno";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"abcde", "fghij", "klmno"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test(expected = MissingArgumentsException.class)

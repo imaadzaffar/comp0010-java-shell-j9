@@ -13,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 
 public class SortTest {
     Sort sort;
@@ -57,10 +57,10 @@ public class SortTest {
 
         sort.exec(args, in, output);
 
-        String expected = "a\nb\nc\nd\ne\nz";
-        String appOutput = stream.toString().trim();
-
-        assertEquals(expected, appOutput);
+        String[] expected = {"a", "b", "c", "d", "e", "z"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+        
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -71,10 +71,10 @@ public class SortTest {
 
         sort.exec(args, in, output);
 
-        String expected = "z\ne\nd\nc\nb\na";
-        String appOutput = stream.toString().trim();
-
-        assertEquals(expected, appOutput);
+        String[] expected = {"z", "e", "d", "c", "b", "a"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+        
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -84,10 +84,10 @@ public class SortTest {
 
         sort.exec(args, in, output);
 
-        String appOutput = stream.toString().trim();
-        String expected = "a\nb\nc\nd\ne\nz";
-
-        assertEquals(expected, appOutput);
+        String[] expected = {"a", "b", "c", "d", "e", "z"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+        
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test
@@ -98,10 +98,10 @@ public class SortTest {
 
         sort.exec(args, in, output);
 
-        String expected = "z\ne\nd\nc\nb\na";
-        String appOutput = stream.toString().trim();
-
-        assertEquals(expected, appOutput);
+        String[] expected = {"z", "e", "d", "c", "b", "a"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
+        
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test(expected =  MissingArgumentsException.class)

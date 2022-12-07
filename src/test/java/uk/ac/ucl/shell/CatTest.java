@@ -1,5 +1,6 @@
 package uk.ac.ucl.shell;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.*;
@@ -85,10 +86,10 @@ public class CatTest {
 
         cat.exec(args, in, output);
 
-        String expected = "Saudi Arabia\nArgentina";
-        String appOutput = stream.toString().trim();
+        String[] expected = {"Saudi Arabia", "Argentina"};
+        String[] appOutput = stream.toString().split(System.getProperty("line.separator"));
 
-        assertEquals(expected, appOutput);
+        assertArrayEquals(expected, appOutput);
     }
 
     @Test

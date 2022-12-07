@@ -62,7 +62,8 @@ public class LsTest {
         ls.exec(args, in, output);
 
         String[] expected = {testFile1.getFileName().toString(), testFile2.getFileName().toString()};
-        String [] appOutput = stream.toString().trim().split("[\n\t]");
+        String [] appOutput = stream.toString().trim().split("\t");
+
         Arrays.sort(expected);
         Arrays.sort(appOutput);
 
@@ -78,7 +79,7 @@ public class LsTest {
         ls.exec(args, in, output);
 
         String[] expected = {testFile1.getFileName().toString(), testFile2.getFileName().toString()};
-        String[] appOutput = stream.toString().trim().split("[\n\t]");
+        String[] appOutput = stream.toString().trim().split("\t");
         Arrays.sort(expected);
         Arrays.sort(appOutput);
 

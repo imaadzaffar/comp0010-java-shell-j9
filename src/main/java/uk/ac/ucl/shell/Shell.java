@@ -14,17 +14,37 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+/**
+* <h2>COMP0010 Shell</h2>
+* COMP0010 Shell is a shell created for educational purposes. 
+* Similarly to other shells, it provides a REPL, an interactive environment that allows users to execute commands. 
+* COMP0010 Shell has a simple language for specifying commands that resembles Bash. 
+*/
 public class Shell {
     private static Path currentDirectory = Paths.get(System.getProperty("user.dir"));
 
+    /**
+     * Returns the Shell's current working directory
+     * @return The current working directory path
+     */
     public static Path getCurrentDirectory() {
         return currentDirectory;
     }
 
+    /**
+     * Sets the Shell's current working directory
+     * @param cd The directory path to set
+     */
     public static void setCurrentDirectory(String cd) {
         currentDirectory = Paths.get(cd);
     }
 
+    /**
+     * Evaluates the command line arguments and writes the output
+     * @param cmdline The command line arguments
+     * @param output The output stream to write the output to
+     * @throws IOException
+     */
     public static void eval(String cmdline, OutputStream output) throws IOException {
         CharStream parserInput = CharStreams.fromString(cmdline);
         ShellGrammarLexer lexer = new ShellGrammarLexer(parserInput);
@@ -52,6 +72,10 @@ public class Shell {
         }
     }
 
+    /**
+     * The main entry point of the Shell application.
+     * @param args The command line arguments to execute the Shell
+     */
     @Generated
     public static void main(String[] args) {
         if (args.length > 0) {
