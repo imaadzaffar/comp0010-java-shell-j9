@@ -60,15 +60,6 @@ public class RmTest {
     public void testNoArgs() throws IOException {
         ArrayList<String> args = new ArrayList<>();
 
-        rm.exec(args, in, output);
-    }
-
-    @Test(expected = TooManyArgumentsException.class)
-    public void testTooManyArguments() throws IOException {
-        ArrayList<String> args = new ArrayList<>();
-        args.add("One");
-        args.add("Two");
-
-        rm.exec(args, in, output);
+        rm.exec(args, null, output);
     }
 }

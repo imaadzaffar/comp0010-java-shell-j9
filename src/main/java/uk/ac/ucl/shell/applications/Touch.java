@@ -8,13 +8,21 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Touch implements Application {
     @Override
     public void exec(List<String> args, InputStream input, OutputStreamWriter output) throws IOException {
         if (args.isEmpty()) {
-            throw new MissingArgumentsException("touch");
+            try (Scanner reader = new Scanner(input)) {
+                while (reader.hasNextLine()) {
+                    args.add(reader.nextLine());
+                }
+            } catch (NullPointerException e) {
+                throw new MissingArgumentsException("touch");
+            }
         }
 
         for (String fileName : args) {

@@ -103,7 +103,7 @@ public class WcTest {
     public void testNoArgs() throws IOException {
         ArrayList<String> args = new ArrayList<>();
 
-        wc.exec(args, in, output);
+        wc.exec(args, null, output);
     }
 
     @Test(expected = FileNotFoundException.class)

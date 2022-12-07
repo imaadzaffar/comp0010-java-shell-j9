@@ -59,7 +59,7 @@ public class TouchTest {
     public void testNoArgs() throws IOException {
         ArrayList<String> args = new ArrayList<>();
 
-        touch.exec(args, in, output);
+        touch.exec(args, null, output);
     }
 
     @After

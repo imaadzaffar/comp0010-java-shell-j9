@@ -42,20 +42,11 @@ public class MkdirTest {
         assertTrue(Files.exists(newDirPath));
     }
 
-    @Test(expected = TooManyArgumentsException.class)
-    public void testTooManyArguments() throws IOException {
-        ArrayList<String> args = new ArrayList<>();
-        args.add("One");
-        args.add("Two");
-
-        mkdir.exec(args, in, output);
-    }
-
     @Test(expected = MissingArgumentsException.class)
     public void testNoArgs() throws IOException {
         ArrayList<String> args = new ArrayList<>();
 
-        mkdir.exec(args, in, output);
+        mkdir.exec(args, null, output);
     }
 
     @Test(expected = FileAlreadyExistsException.class)
